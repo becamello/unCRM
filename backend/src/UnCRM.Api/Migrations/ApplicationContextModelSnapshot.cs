@@ -22,6 +22,46 @@ namespace UnCRM.Api.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("UnCRM.Api.Domain.Models.Pessoa", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Cnpj")
+                        .HasMaxLength(18)
+                        .HasColumnType("VARCHAR");
+
+                    b.Property<string>("Cpf")
+                        .HasMaxLength(14)
+                        .HasColumnType("VARCHAR");
+
+                    b.Property<DateTime>("DataCadastro")
+                        .HasColumnType("timestamp");
+
+                    b.Property<DateTime?>("DataInativacao")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR");
+
+                    b.Property<string>("NomeCurto")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("VARCHAR");
+
+                    b.Property<string>("TipoPessoa")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("pessoa", (string)null);
+                });
+
             modelBuilder.Entity("UnCRM.Api.Domain.Models.Usuario", b =>
                 {
                     b.Property<long>("Id")

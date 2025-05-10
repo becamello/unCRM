@@ -29,14 +29,16 @@ static void ConfigurarInjecaoDeDependencia(WebApplicationBuilder builder)
     builder.Services.AddDbContext<ApplicationContext>(options =>
         options.UseNpgsql(connectionString), ServiceLifetime.Transient, ServiceLifetime.Transient);
 
-    builder.Services.AddAutoMapper(typeof(UsuarioProfile)); 
+    builder.Services.AddAutoMapper(typeof(UsuarioProfile), typeof(PessoaProfile)); 
 
     builder.Services
         .AddSingleton(builder.Configuration)
         .AddSingleton(builder.Environment)
         .AddScoped<TokenService>()
         .AddScoped<IUsuarioRepository, UsuarioRepository>()
-        .AddScoped<IUsuarioService, UsuarioService>();
+        .AddScoped<IUsuarioService, UsuarioService>()
+        .AddScoped<IPessoaRepository, PessoaRepository>()
+        .AddScoped<IPessoaService, PessoaService>();
 }
 
 
