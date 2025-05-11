@@ -13,18 +13,22 @@ namespace UnCRM.Api.Data.Mappings
 
             builder.Property(p => p.Login)
             .HasColumnType("VARCHAR")
+            .HasMaxLength(20)
             .IsRequired();
 
             builder.Property(p => p.Senha)
             .HasColumnType("VARCHAR")
+            .HasMaxLength(255)
             .IsRequired();
             
             builder.Property(p => p.Nome)
             .HasColumnType("VARCHAR")
+            .HasMaxLength(50)
             .IsRequired();
 
             builder.Property(p => p.Cargo)
             .HasColumnType("VARCHAR")
+            .HasMaxLength(30)
             .IsRequired();
 
             builder.Property(p => p.DataCadastro)

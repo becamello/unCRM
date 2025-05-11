@@ -10,6 +10,7 @@ namespace UnCRM.Api.AutoMapper
         {
             CreateMap<Pessoa, PessoaRequestContract>().ReverseMap();
             CreateMap<Pessoa, PessoaResponseContract>().ReverseMap();
+            
         }
     }
 }

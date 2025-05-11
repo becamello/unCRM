@@ -15,10 +15,10 @@ namespace UnCRM.Api.Domain.Models
         public string NomeCurto { get; set; } = null!;
 
         [Required(ErrorMessage = "O campo de tipo da pessoa é obrigatório.")]
-        public TipoPessoaEnum? TipoPessoa { get; set; }
+        public TipoPessoaEnum TipoPessoa { get; set; }
 
-        public string? Cpf { get; set; }
-        public string? Cnpj { get; set; }
+        [Required(ErrorMessage = "O campo do documento da pessoa é obrigatório.")]
+        public string CpfCnpj { get; set; }
 
         [Required]
         public DateTime DataCadastro { get; set; }

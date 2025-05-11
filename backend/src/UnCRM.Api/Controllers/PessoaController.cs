@@ -24,7 +24,7 @@ namespace UnCRM.Api.Controllers
             try
             {
 
-                return Created("", await _pessoaService.Adicionar(contrato, 0));
+                return Created("", await _pessoaService.Adicionar(contrato));
             }
             catch (NotFoundException ex)
             {
@@ -46,7 +46,7 @@ namespace UnCRM.Api.Controllers
         {
             try
             {
-                return Ok(await _pessoaService.Obter(0));
+                return Ok(await _pessoaService.ObterTodos());
             }
             catch (Exception ex)
             {
@@ -54,15 +54,14 @@ namespace UnCRM.Api.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("{id}")]
+        [HttpGet("{id}")]
         [Authorize]
         public async Task<IActionResult> Obter(long id)
         {
             try
             {
 
-                return Ok(await _pessoaService.Obter(id, 0));
+                return Ok(await _pessoaService.ObterPorId(id));
             }
             catch (NotFoundException ex)
             {
@@ -74,14 +73,13 @@ namespace UnCRM.Api.Controllers
             }
         }
 
-        [HttpPut]
-        [Route("{id}")]
+        [HttpPut("{id}")]
         [Authorize]
         public async Task<IActionResult> Atualizar(long id, PessoaRequestContract contrato)
         {
             try
             {
-                return Ok(await _pessoaService.Atualizar(id, contrato, 0));
+                return Ok(await _pessoaService.Atualizar(id, contrato));
             }
 
             catch (NotFoundException ex)
@@ -98,14 +96,13 @@ namespace UnCRM.Api.Controllers
             }
         }
 
-        [HttpDelete]
-        [Route("{id}")]
+        [HttpDelete("{id}")]
         [Authorize]
         public async Task<IActionResult> Deletar(long id)
         {
             try
             {
-                await _pessoaService.Inativar(id, 0);
+                await _pessoaService.Inativar(id);
                 return NoContent();
             }
             catch (NotFoundException ex)

@@ -8,39 +8,41 @@ using UnCRM.Api.Exceptions;
 
 namespace UnCRM.Api.Domain.Services.Classes
 {
-    public class PessoaService : IPessoaService
+    public class PessoaService(IPessoaRepository pessoaRepository, IMapper mapper) : IPessoaService
     {
-        private readonly IPessoaRepository _pessoaRepository;
-        private readonly IMapper _mapper;
-        public PessoaService(IPessoaRepository pessoaRepository, IMapper mapper)
+        private readonly IPessoaRepository _pessoaRepository = pessoaRepository;
+        private readonly IMapper _mapper = mapper;
+
+        public async Task<PessoaResponseContract> Adicionar(PessoaRequestContract request)
         {
-            _pessoaRepository = pessoaRepository;
-            _mapper = mapper;
-        }
-        public async Task<PessoaResponseContract> Adicionar(PessoaRequestContract entidade, long idPessoa)
-        {
-            if (entidade.TipoPessoa == TipoPessoaEnum.PF)
+            if (string.IsNullOrWhiteSpace(request.Nome))
+                throw new BadRequestException("Nome é obrigatório.");
+
+            if (string.IsNullOrWhiteSpace(request.NomeCurto))
+                throw new BadRequestException("Nome é obrigatório.");
+
+            if (request.TipoPessoa == TipoPessoaEnum.PessoaFisica)
             {
-                if (string.IsNullOrWhiteSpace(entidade.Cpf))
+                if (string.IsNullOrWhiteSpace(request.CpfCnpj))
                     throw new BadRequestException("CPF é obrigatório para pessoa física.");
 
-                if (!ValidarCpf(entidade.Cpf))
+                if (!ValidarCpf(request.CpfCnpj))
                     throw new BadRequestException("CPF inválido.");
-
-                entidade.Cnpj = string.Empty; 
             }
-            else if (entidade.TipoPessoa == TipoPessoaEnum.PJ)
+            else if (request.TipoPessoa == TipoPessoaEnum.PessoaJuridica)
             {
-                if (string.IsNullOrWhiteSpace(entidade.Cnpj))
+                if (string.IsNullOrWhiteSpace(request.CpfCnpj))
                     throw new BadRequestException("CNPJ é obrigatório para pessoa jurídica.");
 
-                if (!ValidarCnpj(entidade.Cnpj))
+                if (!ValidarCnpj(request.CpfCnpj))
                     throw new BadRequestException("CNPJ inválido.");
-
-                entidade.Cpf = string.Empty; 
+            }
+            else
+            {
+                throw new BadRequestException("Tipo de pessoa inválido.");
             }
 
-            var pessoa = _mapper.Map<Pessoa>(entidade);
+            var pessoa = _mapper.Map<Pessoa>(request);
             pessoa.DataCadastro = DateTime.Now;
 
             pessoa = await _pessoaRepository.Adicionar(pessoa);
@@ -48,91 +50,143 @@ namespace UnCRM.Api.Domain.Services.Classes
             return _mapper.Map<PessoaResponseContract>(pessoa);
         }
 
-        public async Task<PessoaResponseContract> Atualizar(long id, PessoaRequestContract entidade, long idPessoa)
+
+        public async Task<PessoaResponseContract> Atualizar(long id, PessoaRequestContract request)
         {
-            _ = await Obter(id) ?? throw new NotFoundException("Pessoa não encontrada para atualização.");
+            var entidade = await _pessoaRepository.Obter(id) ?? throw new NotFoundException("Pessoa não encontrada.");
 
-            if (entidade.TipoPessoa == TipoPessoaEnum.PF)
+            if (string.IsNullOrWhiteSpace(request.Nome))
+                throw new BadRequestException("Nome é obrigatório.");
+
+            if (string.IsNullOrWhiteSpace(request.NomeCurto))
+                throw new BadRequestException("Nome é obrigatório.");
+
+            if (request.TipoPessoa == TipoPessoaEnum.PessoaFisica)
             {
-                if (string.IsNullOrEmpty(entidade.Cpf))
-                {
-                    throw new ArgumentException("CPF é obrigatório para Pessoa Física.");
-                }
-                if (!ValidarCpf(entidade.Cpf))
-                {
-                    throw new ArgumentException("CPF inválido.");
-                }
-                entidade.Cnpj = string.Empty;
+                if (string.IsNullOrWhiteSpace(request.CpfCnpj))
+                    throw new BadRequestException("CPF é obrigatório para Pessoa Física.");
+
+                if (!ValidarCpf(request.CpfCnpj))
+                    throw new BadRequestException("CPF inválido.");
             }
-            else if (entidade.TipoPessoa == TipoPessoaEnum.PJ)
+            else if (request.TipoPessoa == TipoPessoaEnum.PessoaJuridica)
             {
-                if (string.IsNullOrEmpty(entidade.Cnpj))
-                {
-                    throw new ArgumentException("CNPJ é obrigatório para Pessoa Jurídica.");
-                }
+                if (string.IsNullOrWhiteSpace(request.CpfCnpj))
+                    throw new BadRequestException("CNPJ é obrigatório para Pessoa Jurídica.");
 
-                if (!ValidarCnpj(entidade.Cnpj))
-                {
-                    throw new ArgumentException("CNPJ inválido.");
-                }
-                entidade.Cpf = string.Empty;
+                if (!ValidarCnpj(request.CpfCnpj))
+                    throw new BadRequestException("CNPJ inválido.");
+            }
+            else
+            {
+                throw new BadRequestException("Tipo de pessoa inválido.");
             }
 
-            var pessoa = _mapper.Map<Pessoa>(entidade);
-            pessoa.Id = id;
+            _mapper.Map(request, entidade);
 
-            pessoa = await _pessoaRepository.Atualizar(pessoa);
+            await _pessoaRepository.Atualizar(entidade);
 
-            return _mapper.Map<PessoaResponseContract>(pessoa);
+            return _mapper.Map<PessoaResponseContract>(entidade);
         }
 
-        public async Task Inativar(long id, long idPessoa)
+
+        public async Task Inativar(long id)
         {
             var pessoa = await _pessoaRepository.Obter(id) ?? throw new NotFoundException("Pessoa não encontrada para inativação.");
 
             await _pessoaRepository.Deletar(_mapper.Map<Pessoa>(pessoa));
         }
 
-        public async Task<IEnumerable<PessoaResponseContract>> Obter(long idPessoa)
+        public async Task<IEnumerable<PessoaResponseContract>> ObterTodos()
         {
             var pessoas = await _pessoaRepository.Obter();
 
-            return pessoas.Select(pessoa => _mapper.Map<PessoaResponseContract>(pessoa));
+            return pessoas.Select(_mapper.Map<PessoaResponseContract>);
         }
 
-        public async Task<PessoaResponseContract> Obter(long id, long idPessoa)
+        public async Task<PessoaResponseContract> ObterPorId(long id)
         {
-            var pessoa = await _pessoaRepository.Obter(id);
-
-            if (pessoa == null)
-            {
-                throw new NotFoundException("Pessoa não encontrada.");
-            }
-
+            var pessoa = await _pessoaRepository.Obter(id) ?? throw new NotFoundException("Pessoa não encontrada.");
             return _mapper.Map<PessoaResponseContract>(pessoa);
         }
 
-        private bool ValidarCpf(string cpf)
+        private static bool ValidarCpf(string cpf)
         {
-            if (string.IsNullOrWhiteSpace(cpf) || cpf.Length != 11)
-                return false;
-            if (!cpf.All(char.IsDigit))
-            {
-                return false;
-            }
+            int[] multiplicador1 = [10, 9, 8, 7, 6, 5, 4, 3, 2];
+            int[] multiplicador2 = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2];
 
-            return true;
+            cpf = cpf.Trim().Replace(".", "").Replace("-", "");
+            if (cpf.Length != 11)
+                return false;
+
+            for (int j = 0; j < 10; j++)
+                if (j.ToString().PadLeft(11, char.Parse(j.ToString())) == cpf)
+                    return false;
+
+            string tempCpf = cpf[..9];
+            int soma = 0;
+
+            for (int i = 0; i < 9; i++)
+                soma += int.Parse(tempCpf[i].ToString()) * multiplicador1[i];
+
+            int resto = soma % 11;
+            if (resto < 2)
+                resto = 0;
+            else
+                resto = 11 - resto;
+
+            string digito = resto.ToString();
+            tempCpf += digito;
+            soma = 0;
+            for (int i = 0; i < 10; i++)
+                soma += int.Parse(tempCpf[i].ToString()) * multiplicador2[i];
+
+            resto = soma % 11;
+            if (resto < 2)
+                resto = 0;
+            else
+                resto = 11 - resto;
+
+            digito += resto.ToString();
+
+            return cpf.EndsWith(digito);
         }
-        private bool ValidarCnpj(string cnpj)
+        private static bool ValidarCnpj(string cnpj)
         {
-            if (string.IsNullOrWhiteSpace(cnpj) || cnpj.Length != 14)
-                return false;
-            if (!cnpj.All(char.IsDigit))
-            {
-                return false;
-            }
+            int[] multiplicador1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+            int[] multiplicador2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
 
-            return true;
+            cnpj = cnpj.Trim().Replace(".", "").Replace("-", "").Replace("/", "");
+            if (cnpj.Length != 14)
+                return false;
+
+            string tempCnpj = cnpj.Substring(0, 12);
+            int soma = 0;
+
+            for (int i = 0; i < 12; i++)
+                soma += int.Parse(tempCnpj[i].ToString()) * multiplicador1[i];
+
+            int resto = soma % 11;
+            if (resto < 2)
+                resto = 0;
+            else
+                resto = 11 - resto;
+
+            string digito = resto.ToString();
+            tempCnpj += digito;
+            soma = 0;
+            for (int i = 0; i < 13; i++)
+                soma += int.Parse(tempCnpj[i].ToString()) * multiplicador2[i];
+
+            resto = soma % 11;
+            if (resto < 2)
+                resto = 0;
+            else
+                resto = 11 - resto;
+
+            digito += resto.ToString();
+
+            return cnpj.EndsWith(digito);
         }
     }
 }

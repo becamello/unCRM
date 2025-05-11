@@ -45,7 +45,7 @@ namespace UnCRM.Api.Controllers
             try
             {
 
-                return Created("", await _usuarioService.Adicionar(contrato, 0));
+                return Created("", await _usuarioService.Adicionar(contrato));
             }
             catch (NotFoundException ex)
             {
@@ -67,7 +67,7 @@ namespace UnCRM.Api.Controllers
         {
             try
             {
-                return Ok(await _usuarioService.Obter(0));
+                return Ok(await _usuarioService.ObterTodos());
             }
             catch (Exception ex)
             {
@@ -75,15 +75,14 @@ namespace UnCRM.Api.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("{id}")]
+        [HttpGet("{id}")]
         [Authorize]
         public async Task<IActionResult> Obter(long id)
         {
             try
             {
 
-                return Ok(await _usuarioService.Obter(id, 0));
+                return Ok(await _usuarioService.ObterPorId(id));
             }
             catch (NotFoundException ex)
             {
@@ -95,14 +94,13 @@ namespace UnCRM.Api.Controllers
             }
         }
 
-        [HttpPut]
-        [Route("{id}")]
+        [HttpPut("{id}")]
         [Authorize]
         public async Task<IActionResult> Atualizar(long id, UsuarioRequestContract contrato)
         {
             try
             {
-                return Ok(await _usuarioService.Atualizar(id, contrato, 0));
+                return Ok(await _usuarioService.Atualizar(id, contrato));
             }
 
             catch (NotFoundException ex)
@@ -119,14 +117,13 @@ namespace UnCRM.Api.Controllers
             }
         }
 
-        [HttpDelete]
-        [Route("{id}")]
+        [HttpDelete("{id}")]
         [Authorize]
         public async Task<IActionResult> Deletar(long id)
         {
             try
             {
-                await _usuarioService.Inativar(id, 0);
+                await _usuarioService.Inativar(id);
                 return NoContent();
             }
             catch (NotFoundException ex)

@@ -5,14 +5,9 @@ using UnCRM.Api.Domain.Repository.Interfaces;
 
 namespace UnCRM.Api.Domain.Repository.Classes
 {
-    public class PessoaRepository : IPessoaRepository
+    public class PessoaRepository(ApplicationContext context) : IPessoaRepository
     {
-        private readonly ApplicationContext _contexto;
-
-        public PessoaRepository(ApplicationContext context)
-        {
-            _contexto = context;
-        }
+        private readonly ApplicationContext _contexto = context;
 
         public async Task<Pessoa> Adicionar(Pessoa entidade)
         {
@@ -25,6 +20,7 @@ namespace UnCRM.Api.Domain.Repository.Classes
             catch (Exception ex)
             {
                 Console.WriteLine("Erro ao salvar no banco: " + ex.Message);
+
                 throw;
             }
         }
@@ -32,11 +28,7 @@ namespace UnCRM.Api.Domain.Repository.Classes
         public async Task<Pessoa> Atualizar(Pessoa entidade)
         {
             var entidadeBanco = await _contexto.Pessoa
-        .FirstOrDefaultAsync(u => u.Id == entidade.Id);
-
-            if (entidadeBanco == null)
-                throw new Exception("Pessoa não encontrada para atualização.");
-
+            .FirstOrDefaultAsync(u => u.Id == entidade.Id) ?? throw new Exception("Pessoa não encontrada para atualização.");
             _contexto.Entry(entidadeBanco).CurrentValues.SetValues(entidade);
             _contexto.Pessoa.Update(entidadeBanco);
 
@@ -58,7 +50,7 @@ namespace UnCRM.Api.Domain.Repository.Classes
                                            .ToListAsync();
         }
 
-        public async Task<Pessoa?> Obter(long id)
+        public async Task<Pessoa> Obter(long id)
         {
             return await _contexto.Pessoa.AsNoTracking()
                     .Where(u => u.Id == id)

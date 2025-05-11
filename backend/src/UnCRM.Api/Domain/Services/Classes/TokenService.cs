@@ -6,14 +6,9 @@ using UnCRM.Api.Domain.Models;
 
 namespace UnCRM.Api.Domain.Services.Classes
 {
-    public class TokenService
+    public class TokenService(IConfiguration configuration)
     {
-        private readonly IConfiguration _configuration;
-
-        public TokenService(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
+        private readonly IConfiguration _configuration = configuration;
 
         public string GerarToken(Usuario usuario)
         {
@@ -23,12 +18,12 @@ namespace UnCRM.Api.Domain.Services.Classes
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
+                Subject = new ClaimsIdentity(
+                [
                     new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
                     new Claim(ClaimTypes.Name, usuario.Login),
                     new Claim(ClaimTypes.Role, usuario.Cargo.ToString())
-                }),
+                ]),
 
                 Expires = DateTime.UtcNow.AddHours(Convert.ToInt32(_configuration["HorasValidadeToken"])),
 

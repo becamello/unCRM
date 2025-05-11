@@ -10,27 +10,26 @@ using UnCRM.Api.Exceptions;
 
 namespace UnCRM.Api.Domain.Services.Classes
 {
-    public class UsuarioService : IUsuarioService
+    public class UsuarioService(
+        IUsuarioRepository usuarioRepository,
+        IMapper mapper,
+        TokenService tokenService) : IUsuarioService
     {
-          private readonly IUsuarioRepository _usuarioRepository;
-        private readonly IMapper _mapper;
-
-        private readonly TokenService _tokenService;
-
-        public UsuarioService(
-            IUsuarioRepository usuarioRepository,
-            IMapper mapper,
-            TokenService tokenService)
+        private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
+        private readonly IMapper _mapper = mapper;
+        private readonly TokenService _tokenService = tokenService;
+        public async Task<UsuarioResponseContract> Adicionar(UsuarioRequestContract request)
         {
-            _usuarioRepository = usuarioRepository;
-            _mapper = mapper;
-            _tokenService = tokenService;
-        }
+            if (string.IsNullOrWhiteSpace(request.Nome))
+                throw new BadRequestException("Nome é obrigatório.");
 
-        public async Task<UsuarioResponseContract> Adicionar(UsuarioRequestContract entidade, long idUsuario)
-        {
-            var usuario = _mapper.Map<Usuario>(entidade);
+            if (string.IsNullOrWhiteSpace(request.Login))
+                throw new BadRequestException("Login é obrigatório.");
 
+            if (string.IsNullOrWhiteSpace(request.Senha))
+                throw new BadRequestException("Senha é obrigatória.");
+
+            var usuario = _mapper.Map<Usuario>(request);
             usuario.Senha = GerarHashSenha(usuario.Senha);
             usuario.DataCadastro = DateTime.Now;
 
@@ -38,36 +37,43 @@ namespace UnCRM.Api.Domain.Services.Classes
 
             return _mapper.Map<UsuarioResponseContract>(usuario);
         }
-
-        public async Task<UsuarioResponseContract> Atualizar(long id, UsuarioRequestContract entidade, long idUsuario)
+        public async Task<UsuarioResponseContract> Atualizar(long id, UsuarioRequestContract request)
         {
-            _ = await Obter(id) ?? throw new NotFoundException("Usuario não encontrado para atualização.");
+            var entidade = await _usuarioRepository.Obter(id) ?? throw new NotFoundException("Usuário não encontrado para atualização.");
 
-            var usuario = _mapper.Map<Usuario>(entidade);
-            usuario.Id = id;
-            usuario.Senha = GerarHashSenha(entidade.Senha);
+            if (string.IsNullOrWhiteSpace(request.Nome))
+                throw new BadRequestException("Nome é obrigatório.");
 
-            usuario = await _usuarioRepository.Atualizar(usuario);
+            if (string.IsNullOrWhiteSpace(request.Login))
+                throw new BadRequestException("Login é obrigatório.");
 
-            return _mapper.Map<UsuarioResponseContract>(usuario);
+            if (string.IsNullOrWhiteSpace(request.Senha))
+                throw new BadRequestException("Senha é obrigatória.");
+
+            _mapper.Map(request, entidade);
+
+            entidade.Id = id;
+            entidade.Senha = GerarHashSenha(request.Senha);
+
+            await _usuarioRepository.Atualizar(entidade);
+
+            return _mapper.Map<UsuarioResponseContract>(entidade);
         }
 
-        public async Task<UsuarioLoginResponseContract> Autenticar(UsuarioLoginRequestContract usuarioLoginRequest)
+        public async Task<UsuarioLoginResponseContract> Autenticar(UsuarioLoginRequestContract request)
         {
-            var usuario = await _usuarioRepository.Obter(usuarioLoginRequest.Login);
+            var usuario = await _usuarioRepository.Obter(request.Login);
 
-            if (usuario is null)
-                throw new AuthenticationException("Login não localizado");
+            if (usuario == null)
+                throw new AuthenticationException("Login não localizado.");
 
-            if (usuario.DataInativacao is not null)
-                throw new AuthenticationException("O usuário encontra-se inativo");
+            if (usuario.DataInativacao != null)
+                throw new AuthenticationException("O usuário encontra-se inativo.");
 
-            var hashSenha = GerarHashSenha(usuarioLoginRequest.Senha);
+            var hashSenha = GerarHashSenha(request.Senha);
 
             if (usuario.Senha != hashSenha)
-            {
                 throw new AuthenticationException("Senha inválida.");
-            }
 
             return new UsuarioLoginResponseContract
             {
@@ -77,50 +83,42 @@ namespace UnCRM.Api.Domain.Services.Classes
             };
         }
 
-        public async Task Inativar(long id, long idUsuario)
+        public async Task Inativar(long id)
         {
-            var usuario = await _usuarioRepository.Obter(id) ?? throw new NotFoundException("Usuario não encontrado para inativação.");
+            var usuario = await _usuarioRepository.Obter(id) ?? throw new NotFoundException("Usuário não encontrado para inativação.");
 
-            await _usuarioRepository.Deletar(_mapper.Map<Usuario>(usuario));
+            await _usuarioRepository.Deletar(usuario);
         }
 
-        public async Task<UsuarioResponseContract> Obter(string login)
+        public async Task<UsuarioResponseContract> ObterPorLogin(string login)
         {
-            var usuario = await _usuarioRepository.Obter(login);
+            var usuario = await _usuarioRepository.Obter(login)
+                           ?? throw new NotFoundException("Usuário não encontrado.");
+
             return _mapper.Map<UsuarioResponseContract>(usuario);
         }
 
-        public async Task<IEnumerable<UsuarioResponseContract>> Obter(long idUsuario)
+        private static string GerarHashSenha(string senha)
+        {
+            using var sha256 = SHA256.Create();
+            var bytes = Encoding.UTF8.GetBytes(senha);
+            var hash = sha256.ComputeHash(bytes);
+            return BitConverter.ToString(hash).Replace("-", "").ToLower();
+        }
+
+        public async Task<IEnumerable<UsuarioResponseContract>> ObterTodos()
         {
             var usuarios = await _usuarioRepository.Obter();
 
-            return usuarios.Select(usuario => _mapper.Map<UsuarioResponseContract>(usuario));
+            return usuarios.Select(_mapper.Map<UsuarioResponseContract>);
         }
 
-        public async Task<UsuarioResponseContract> Obter(long id, long idUsuario)
+        public async Task<UsuarioResponseContract> ObterPorId(long id)
         {
-            var usuario = await _usuarioRepository.Obter(id);
-
-            if (usuario == null)
-            {
-                throw new NotFoundException("Usuário não encontrado.");
-            }
+            var usuario = await _usuarioRepository.Obter(id)
+                           ?? throw new NotFoundException("Usuário não encontrado.");
 
             return _mapper.Map<UsuarioResponseContract>(usuario);
-        }
-
-        public string GerarHashSenha(string senha)
-        {
-            string hashSenha;
-
-            using (SHA256 sha256 = SHA256.Create())
-            {
-                byte[] bytesSenha = Encoding.UTF8.GetBytes(senha);
-                byte[] bytesHashSenha = sha256.ComputeHash(bytesSenha);
-                hashSenha = BitConverter.ToString(bytesHashSenha).Replace("-", "").Replace("-", "").ToLower();
-            }
-
-            return hashSenha;
         }
     }
 }
