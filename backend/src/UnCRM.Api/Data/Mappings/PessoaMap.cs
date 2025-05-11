@@ -13,24 +13,23 @@ namespace UnCRM.Api.Data.Mappings
 
             builder.Property(p => p.Nome)
             .HasColumnType("VARCHAR")
+            .HasMaxLength(50)
             .IsRequired();
 
             builder.Property(p => p.NomeCurto)
             .HasColumnType("VARCHAR")
-            .HasMaxLength(50)
+            .HasMaxLength(30)
             .IsRequired();
 
             builder.Property(p => p.TipoPessoa)
             .HasColumnType("VARCHAR")
+            .HasMaxLength(15)
             .IsRequired();
 
-            builder.Property(p => p.Cpf)
+            builder.Property(p => p.CpfCnpj)
             .HasColumnType("VARCHAR")
-            .HasMaxLength(14);
-
-            builder.Property(p => p.Cnpj)
-            .HasColumnType("VARCHAR")
-            .HasMaxLength(18);
+            .HasMaxLength(14)
+            .IsRequired();
 
             builder.Property(p => p.DataCadastro)
             .HasColumnType("timestamp")

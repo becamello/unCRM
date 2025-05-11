@@ -18,7 +18,7 @@ namespace UnCRM.Api.Domain.Models
         public string Nome { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "O cargo do usuário é obrigatório.")]
-        public CargoEnum? Cargo { get; set; }
+        public CargoEnum Cargo { get; set; }
 
         [Required]
         public DateTime DataCadastro { get; set; }

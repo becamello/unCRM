@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace UnCRM.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class CriarUsuarioePessoa : Migration
+    public partial class CriarTabelaUsuarioEPessoa : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,11 +18,10 @@ namespace UnCRM.Api.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Nome = table.Column<string>(type: "VARCHAR", nullable: false),
-                    NomeCurto = table.Column<string>(type: "VARCHAR", maxLength: 50, nullable: false),
-                    TipoPessoa = table.Column<string>(type: "VARCHAR", nullable: false),
-                    Cpf = table.Column<string>(type: "VARCHAR", maxLength: 14, nullable: true),
-                    Cnpj = table.Column<string>(type: "VARCHAR", maxLength: 18, nullable: true),
+                    Nome = table.Column<string>(type: "VARCHAR", maxLength: 50, nullable: false),
+                    NomeCurto = table.Column<string>(type: "VARCHAR", maxLength: 30, nullable: false),
+                    TipoPessoa = table.Column<string>(type: "VARCHAR", maxLength: 15, nullable: false),
+                    CpfCnpj = table.Column<string>(type: "VARCHAR", maxLength: 14, nullable: false),
                     DataCadastro = table.Column<DateTime>(type: "timestamp", nullable: false),
                     DataInativacao = table.Column<DateTime>(type: "timestamp", nullable: true)
                 },
@@ -37,10 +36,10 @@ namespace UnCRM.Api.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Login = table.Column<string>(type: "VARCHAR", nullable: false),
-                    Senha = table.Column<string>(type: "VARCHAR", nullable: false),
-                    Nome = table.Column<string>(type: "VARCHAR", nullable: false),
-                    Cargo = table.Column<string>(type: "VARCHAR", nullable: false),
+                    Login = table.Column<string>(type: "VARCHAR", maxLength: 20, nullable: false),
+                    Senha = table.Column<string>(type: "VARCHAR", maxLength: 255, nullable: false),
+                    Nome = table.Column<string>(type: "VARCHAR", maxLength: 50, nullable: false),
+                    Cargo = table.Column<string>(type: "VARCHAR", maxLength: 30, nullable: false),
                     DataCadastro = table.Column<DateTime>(type: "timestamp", nullable: false),
                     DataInativacao = table.Column<DateTime>(type: "timestamp", nullable: true)
                 },

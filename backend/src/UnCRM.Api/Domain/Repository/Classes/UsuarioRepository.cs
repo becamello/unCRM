@@ -5,14 +5,10 @@ using UnCRM.Api.Domain.Repository.Interfaces;
 
 namespace UnCRM.Api.Domain.Repository.Classes
 {
-    public class UsuarioRepository : IUsuarioRepository
+    public class UsuarioRepository(ApplicationContext context) : IUsuarioRepository
     {
-        private readonly ApplicationContext _contexto;
+        private readonly ApplicationContext _contexto = context;
 
-        public UsuarioRepository(ApplicationContext context)
-        {
-            _contexto = context;
-        }
         public async Task<Usuario> Adicionar(Usuario entidade)
         {
             try
@@ -30,7 +26,7 @@ namespace UnCRM.Api.Domain.Repository.Classes
 
         public async Task<Usuario> Atualizar(Usuario entidade)
         {
-            Usuario? entidadeBanco = _contexto.Usuario
+            Usuario entidadeBanco = _contexto.Usuario
                 .Where(u => u.Id == entidade.Id)
                 .FirstOrDefault();
 
@@ -48,7 +44,7 @@ namespace UnCRM.Api.Domain.Repository.Classes
             await Atualizar(entidade);
         }
 
-        public async Task<Usuario?> Obter(string login)
+        public async Task<Usuario> Obter(string login)
         {
             return await _contexto.Usuario.AsNoTracking()
                               .Where(u => u.Login == login)
@@ -62,7 +58,7 @@ namespace UnCRM.Api.Domain.Repository.Classes
                                            .ToListAsync();
         }
 
-        public async Task<Usuario?> Obter(long id)
+        public async Task<Usuario> Obter(long id)
         {
             return await _contexto.Usuario.AsNoTracking()
                     .Where(u => u.Id == id)

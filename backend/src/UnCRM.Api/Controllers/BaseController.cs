@@ -6,17 +6,18 @@ namespace UnCRM.Api.Controllers
 {
     public class BaseController : Controller
     {
-       protected long _idUsuario;
+        protected long _idUsuario;
         protected long ObterIdUsuarioLogado()
         {
-            var id = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var idClaim = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
 
-            long.TryParse(id, out long idUsuario);
+            if (idClaim is null || !long.TryParse(idClaim.Value, out var idUsuario))
+                throw new UnauthorizedAccessException("Usuário não autenticado ou ID inválido.");
 
             return idUsuario;
         }
 
-         protected ModelErrorContract RetornarModelNotFound(Exception ex)
+        protected ModelErrorContract RetornarModelNotFound(Exception ex)
         {
             return new ModelErrorContract
             {
@@ -27,7 +28,7 @@ namespace UnCRM.Api.Controllers
             };
         }
 
-          protected ModelErrorContract RetornarModelUnauthorized(Exception ex)
+        protected ModelErrorContract RetornarModelUnauthorized(Exception ex)
         {
             return new ModelErrorContract
             {
@@ -38,7 +39,7 @@ namespace UnCRM.Api.Controllers
             };
         }
 
-         protected ModelErrorContract RetornarModelBadRequest(Exception ex)
+        protected ModelErrorContract RetornarModelBadRequest(Exception ex)
         {
             return new ModelErrorContract
             {

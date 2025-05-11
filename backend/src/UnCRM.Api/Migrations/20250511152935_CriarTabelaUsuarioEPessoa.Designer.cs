@@ -12,8 +12,8 @@ using UnCRM.Api.Data;
 namespace UnCRM.Api.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20250510192734_CriarUsuarioePessoa")]
-    partial class CriarUsuarioePessoa
+    [Migration("20250511152935_CriarTabelaUsuarioEPessoa")]
+    partial class CriarTabelaUsuarioEPessoa
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,11 +33,8 @@ namespace UnCRM.Api.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<string>("Cnpj")
-                        .HasMaxLength(18)
-                        .HasColumnType("VARCHAR");
-
-                    b.Property<string>("Cpf")
+                    b.Property<string>("CpfCnpj")
+                        .IsRequired()
                         .HasMaxLength(14)
                         .HasColumnType("VARCHAR");
 
@@ -49,15 +46,17 @@ namespace UnCRM.Api.Migrations
 
                     b.Property<string>("Nome")
                         .IsRequired()
+                        .HasMaxLength(50)
                         .HasColumnType("VARCHAR");
 
                     b.Property<string>("NomeCurto")
                         .IsRequired()
-                        .HasMaxLength(50)
+                        .HasMaxLength(30)
                         .HasColumnType("VARCHAR");
 
                     b.Property<string>("TipoPessoa")
                         .IsRequired()
+                        .HasMaxLength(15)
                         .HasColumnType("VARCHAR");
 
                     b.HasKey("Id");
@@ -75,6 +74,7 @@ namespace UnCRM.Api.Migrations
 
                     b.Property<string>("Cargo")
                         .IsRequired()
+                        .HasMaxLength(30)
                         .HasColumnType("VARCHAR");
 
                     b.Property<DateTime>("DataCadastro")
@@ -85,14 +85,17 @@ namespace UnCRM.Api.Migrations
 
                     b.Property<string>("Login")
                         .IsRequired()
+                        .HasMaxLength(20)
                         .HasColumnType("VARCHAR");
 
                     b.Property<string>("Nome")
                         .IsRequired()
+                        .HasMaxLength(50)
                         .HasColumnType("VARCHAR");
 
                     b.Property<string>("Senha")
                         .IsRequired()
+                        .HasMaxLength(255)
                         .HasColumnType("VARCHAR");
 
                     b.HasKey("Id");
