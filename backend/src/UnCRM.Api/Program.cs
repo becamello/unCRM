@@ -4,11 +4,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using UnCRM.Api.AutoMapper;
+using UnCRM.Api.Contract.Pessoa;
 using UnCRM.Api.Data;
+using UnCRM.Api.Domain.Models;
 using UnCRM.Api.Domain.Repository.Classes;
 using UnCRM.Api.Domain.Repository.Interfaces;
 using UnCRM.Api.Domain.Services.Classes;
 using UnCRM.Api.Domain.Services.Interfaces;
+using UnCRM.Api.Exceptions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,18 +30,23 @@ static void ConfigurarInjecaoDeDependencia(WebApplicationBuilder builder)
 
     builder.Services.AddDbContext<ApplicationContext>(options =>
         options.UseNpgsql(connectionString),
-        ServiceLifetime.Transient,
         ServiceLifetime.Transient);
 
     builder.Services.AddAutoMapper(typeof(UsuarioProfile), typeof(PessoaProfile));
 
+    builder.Services.AddHttpContextAccessor();
+
     builder.Services
         .AddSingleton(builder.Configuration)
         .AddSingleton(builder.Environment)
+        .AddScoped<ApplicationContext>()
         .AddScoped<TokenService>()
         .AddScoped<IUsuarioService, UsuarioService>()
-        .AddScoped<IPessoaService, PessoaService>()
+        .AddScoped<AtendimentoService>()
+        .AddScoped<IService<PessoaRequestContract, PessoaResponseContract, long>, PessoaService>()
         .AddScoped<IUsuarioRepository, UsuarioRepository>()
+        .AddScoped<IAtendimentoRepository, AtendimentoRepository>()
+        .AddScoped<IRepository<TipoAtendimento, long>, TipoAtendimentoRepository>()
         .AddScoped<IPessoaRepository, PessoaRepository>();
 }
 
@@ -116,6 +124,47 @@ static void ConfigurarAplicacao(WebApplication app)
     if (app.Environment.IsDevelopment())
         app.UseDeveloperExceptionPage();
 
+    app.UseExceptionHandler(errorApp =>
+    {
+        errorApp.Run(async context =>
+        {
+            context.Response.ContentType = "application/json";
+
+            var exceptionHandlerPathFeature = context.Features.Get<Microsoft.AspNetCore.Diagnostics.IExceptionHandlerPathFeature>();
+            var exception = exceptionHandlerPathFeature?.Error;
+
+            if (exception is ValidationResultException validationException)
+            {
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+
+                var errors = validationException.Errors.Select(e => new
+                {
+                    Campo = e.PropertyName,
+                    Mensagem = e.ErrorMessage
+                });
+
+                var response = new
+                {
+                    Message = validationException.Message,
+                    Errors = errors
+                };
+
+                await context.Response.WriteAsJsonAsync(response);
+            }
+            else
+            {
+                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+
+                var response = new
+                {
+                    Message = "Ocorreu um erro interno no servidor."
+                };
+
+                await context.Response.WriteAsJsonAsync(response);
+            }
+        });
+    });
+
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
@@ -134,135 +183,3 @@ static void ConfigurarAplicacao(WebApplication app)
 
     app.MapControllers();
 }
-
-// using System.Text;
-// using Microsoft.AspNetCore.Authentication.JwtBearer;
-// using Microsoft.EntityFrameworkCore;
-// using Microsoft.IdentityModel.Tokens;
-// using Microsoft.OpenApi.Models;
-// using UnCRM.Api.AutoMapper;
-// using UnCRM.Api.Data;
-// using UnCRM.Api.Domain.Repository.Classes;
-// using UnCRM.Api.Domain.Repository.Interfaces;
-// using UnCRM.Api.Domain.Services.Classes;
-// using UnCRM.Api.Domain.Services.Interfaces;
-
-// var builder = WebApplication.CreateBuilder(args);
-
-// ConfigurarServices(builder);
-
-// ConfigurarInjecaoDeDependencia(builder);
-
-// var app = builder.Build();
-
-// ConfigurarAplicacao(app);
-
-// app.Run();
-
-// static void ConfigurarInjecaoDeDependencia(WebApplicationBuilder builder)
-// {
-//     string connectionString = builder.Configuration.GetConnectionString("PADRAO");
-
-//     builder.Services.AddDbContext<ApplicationContext>(options =>
-//         options.UseNpgsql(connectionString), ServiceLifetime.Transient, ServiceLifetime.Transient);
-
-//     builder.Services.AddAutoMapper(typeof(UsuarioProfile), typeof(PessoaProfile)); 
-
-//     builder.Services
-//         .AddSingleton(builder.Configuration)
-//         .AddSingleton(builder.Environment)
-//         .AddScoped<TokenService>()
-//         .AddScoped<IUsuarioRepository, UsuarioRepository>()
-//         .AddScoped<IUsuarioService, UsuarioService>()
-//         .AddScoped<IPessoaRepository, PessoaRepository>()
-//         .AddScoped<IPessoaService, PessoaService>();
-// }
-
-
-// static object mapper(IServiceProvider provider)
-// {
-//     throw new NotImplementedException();
-// }
-
-// static void ConfigurarServices(WebApplicationBuilder builder)
-// {
-//     builder.Services
-//     .AddCors()
-//     .AddControllers().ConfigureApiBehaviorOptions(options =>
-//     {
-//         options.SuppressModelStateInvalidFilter = true;
-//     }).AddNewtonsoftJson();
-
-//     builder.Services.AddSwaggerGen(c =>
-//     {
-//         c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-//         {
-//             Description = "JTW Authorization header using the Beaerer scheme (Example: 'Bearer 12345abcdef')",
-//             Name = "Authorization",
-//             In = ParameterLocation.Header,
-//             Type = SecuritySchemeType.ApiKey,
-//             Scheme = "Bearer"
-//         });
-
-//         c.AddSecurityRequirement(new OpenApiSecurityRequirement
-//         {
-//             {
-//                 new OpenApiSecurityScheme
-//                 {
-//                     Reference = new OpenApiReference
-//                     {
-//                         Type = ReferenceType.SecurityScheme,
-//                         Id = "Bearer"
-//                     }
-//                 },
-//                 Array.Empty<string>()
-//             }
-//         });
-
-//         c.SwaggerDoc("v1", new OpenApiInfo { Title = "unCRM.Api", Version = "v1", Description = "Documentação da API do unCRM.", });
-//     });
-
-//     builder.Services.AddAuthentication(x =>
-//     {
-//         x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-//         x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-//     })
-
-//     .AddJwtBearer(x =>
-//     {
-//         x.RequireHttpsMetadata = false;
-//         x.SaveToken = true;
-//         x.TokenValidationParameters = new TokenValidationParameters
-//         {
-//             ValidateIssuerSigningKey = true,
-//             IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["KeySecret"])),
-//             ValidateIssuer = false,
-//             ValidateAudience = false
-//         };
-//     });
-// }
-
-// static void ConfigurarAplicacao(WebApplication app)
-// {
-//     AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-//     app.UseDeveloperExceptionPage()
-//         .UseRouting();
-
-//     app.UseSwagger()
-//         .UseSwaggerUI(c =>
-//         {
-//             c.SwaggerEndpoint("/swagger/v1/swagger.json", "UnCRM.Api v1");
-//         });
-
-//     app.UseCors(x => x
-//         .AllowAnyOrigin()
-//         .AllowAnyMethod()
-//         .AllowAnyHeader())
-//         .UseAuthentication();
-
-//     app.UseAuthorization();
-
-//     app.UseEndpoints(endpoints => endpoints.MapControllers());
-
-//     app.MapControllers();
-// }

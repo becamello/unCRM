@@ -4,7 +4,7 @@ using UnCRM.Api.Contract;
 
 namespace UnCRM.Api.Controllers
 {
-    public class BaseController : Controller
+    public class BaseController :  ControllerBase
     {
         protected long _idUsuario;
         protected long ObterIdUsuarioLogado()

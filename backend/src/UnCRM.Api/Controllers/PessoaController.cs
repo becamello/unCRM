@@ -10,9 +10,9 @@ namespace UnCRM.Api.Controllers
     [Route("pessoas")]
     public class PessoaController : BaseController
     {
-        private readonly IPessoaService _pessoaService;
+        private readonly IService<PessoaRequestContract, PessoaResponseContract, long> _pessoaService;
 
-        public PessoaController(IPessoaService pessoaService)
+        public PessoaController(IService<PessoaRequestContract, PessoaResponseContract, long> pessoaService)
         {
             _pessoaService = pessoaService;
         }

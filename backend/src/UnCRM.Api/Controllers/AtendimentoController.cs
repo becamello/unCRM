@@ -1,0 +1,78 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using UnCRM.Api.Contract.Atendimento;
+using UnCRM.Api.Domain.Services.Classes;
+
+namespace UnCRM.Api.Controllers
+{
+    [ApiController]
+    [Route("atendimento")]
+    public class AtendimentoController(AtendimentoService service) : BaseController
+    {
+        private readonly AtendimentoService _service = service;
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> Criar([FromBody] AtendimentoCriarRequestContract request)
+        {
+            var usuarioLogadoId = ObterIdUsuarioLogado();
+            return Created("", await _service.Criar(request, usuarioLogadoId));
+        }
+
+        [HttpPost("/parecer")]
+        [Authorize]
+        public async Task<IActionResult> RegistrarParecer(long id, [FromBody] AtendimentoRegistrarParecerRequestContract request)
+        {
+            var usuarioLogadoId = ObterIdUsuarioLogado();
+            return Created("", await _service.RegistrarParecer(id, usuarioLogadoId, request));
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> ObterTodos()
+        {
+            return Ok(await _service.ObterTodos());
+        }
+
+        [HttpGet("{id}")]
+        [Authorize]
+        public async Task<IActionResult> ObterPorId(long id)
+        {
+            return Ok(await _service.ObterPorId(id));
+        }
+
+        [HttpPut("{id}")]
+        [Authorize]
+        public async Task<IActionResult> Atualizar(long id, [FromBody] AtendimentoCriarRequestContract request)
+        {
+            await _service.Atualizar(id, request);
+            return NoContent();
+        }
+
+        [HttpPut("{id}/parecer/{parecerId}")]
+        [Authorize]
+        public async Task<IActionResult> EditarParecer(long id, long parecerId, [FromBody] AtendimentoEditarParecerRequestContract request)
+        {
+            var usuarioLogadoId = ObterIdUsuarioLogado();
+            await _service.EditarParecer(id, parecerId, request, usuarioLogadoId);
+            return NoContent();
+        }
+
+        [HttpPut("{id}/reabrir")]
+        [Authorize]
+        public async Task<IActionResult> Reabrir(long id)
+        {
+            var usuarioLogadoId = ObterIdUsuarioLogado();
+            await _service.Reabrir(id, usuarioLogadoId);
+            return NoContent();
+        }
+
+        [HttpPut("{id}/encerrar")]
+        [Authorize]
+        public async Task<IActionResult> Encerrar(long id)
+        {
+            await _service.Encerrar(id);
+            return NoContent();
+        }
+    }
+}

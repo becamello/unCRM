@@ -6,6 +6,7 @@ C:\Users\rebec\OneDrive\Documentos\UnCRM\backend\src\UnCRM.Api\bin\Debug\net8.0\
 C:\Users\rebec\OneDrive\Documentos\UnCRM\backend\src\UnCRM.Api\bin\Debug\net8.0\UnCRM.Api.dll
 C:\Users\rebec\OneDrive\Documentos\UnCRM\backend\src\UnCRM.Api\bin\Debug\net8.0\UnCRM.Api.pdb
 C:\Users\rebec\OneDrive\Documentos\UnCRM\backend\src\UnCRM.Api\bin\Debug\net8.0\AutoMapper.dll
+C:\Users\rebec\OneDrive\Documentos\UnCRM\backend\src\UnCRM.Api\bin\Debug\net8.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 C:\Users\rebec\OneDrive\Documentos\UnCRM\backend\src\UnCRM.Api\bin\Debug\net8.0\FluentValidation.dll
 C:\Users\rebec\OneDrive\Documentos\UnCRM\backend\src\UnCRM.Api\bin\Debug\net8.0\FluentValidation.AspNetCore.dll
 C:\Users\rebec\OneDrive\Documentos\UnCRM\backend\src\UnCRM.Api\bin\Debug\net8.0\FluentValidation.DependencyInjectionExtensions.dll
@@ -43,6 +44,7 @@ C:\Users\rebec\OneDrive\Documentos\UnCRM\backend\src\UnCRM.Api\obj\Debug\net8.0\
 C:\Users\rebec\OneDrive\Documentos\UnCRM\backend\src\UnCRM.Api\obj\Debug\net8.0\UnCRM.Api.csproj.CoreCompileInputs.cache
 C:\Users\rebec\OneDrive\Documentos\UnCRM\backend\src\UnCRM.Api\obj\Debug\net8.0\UnCRM.Api.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\rebec\OneDrive\Documentos\UnCRM\backend\src\UnCRM.Api\obj\Debug\net8.0\UnCRM.Api.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\rebec\OneDrive\Documentos\UnCRM\backend\src\UnCRM.Api\obj\Debug\net8.0\UnCRM.Api.sourcelink.json
 C:\Users\rebec\OneDrive\Documentos\UnCRM\backend\src\UnCRM.Api\obj\Debug\net8.0\staticwebassets.build.json
 C:\Users\rebec\OneDrive\Documentos\UnCRM\backend\src\UnCRM.Api\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\rebec\OneDrive\Documentos\UnCRM\backend\src\UnCRM.Api\obj\Debug\net8.0\staticwebassets\msbuild.UnCRM.Api.Microsoft.AspNetCore.StaticWebAssets.props
@@ -57,5 +59,3 @@ C:\Users\rebec\OneDrive\Documentos\UnCRM\backend\src\UnCRM.Api\obj\Debug\net8.0\
 C:\Users\rebec\OneDrive\Documentos\UnCRM\backend\src\UnCRM.Api\obj\Debug\net8.0\UnCRM.Api.pdb
 C:\Users\rebec\OneDrive\Documentos\UnCRM\backend\src\UnCRM.Api\obj\Debug\net8.0\UnCRM.Api.genruntimeconfig.cache
 C:\Users\rebec\OneDrive\Documentos\UnCRM\backend\src\UnCRM.Api\obj\Debug\net8.0\ref\UnCRM.Api.dll
-C:\Users\rebec\OneDrive\Documentos\UnCRM\backend\src\UnCRM.Api\bin\Debug\net8.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
-C:\Users\rebec\OneDrive\Documentos\UnCRM\backend\src\UnCRM.Api\obj\Debug\net8.0\UnCRM.Api.sourcelink.json
