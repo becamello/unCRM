@@ -53,6 +53,7 @@
 <script>
 import { icons } from "@/constants/icons";
 import utilStorage from "@/utils/storage";
+import { lightTheme, darkTheme, themeVars } from '@/constants/colors';
 
 export default {
   name: "MenuLateral",
@@ -87,9 +88,15 @@ export default {
       this.mini = true;
     },
     toggleTheme() {
-      this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
-      localStorage.setItem("darkMode", this.$vuetify.theme.dark);
-    },
+    this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
+    localStorage.setItem("darkMode", this.$vuetify.theme.dark);
+
+    if (this.$vuetify.theme.dark) {
+      themeVars(darkTheme);
+    } else {
+      themeVars(lightTheme);
+    }
+  },
     logout() {
       utilStorage.removerStorage();
       utilStorage.removerTokenNaStorage();
