@@ -52,6 +52,7 @@
 
 <script>
 import { icons } from "@/constants/icons";
+import utilStorage from "@/utils/storage";
 
 export default {
   name: "MenuLateral",
@@ -90,7 +91,10 @@ export default {
       localStorage.setItem("darkMode", this.$vuetify.theme.dark);
     },
     logout() {
-      console.log("Logout realizado");
+      utilStorage.removerStorage();
+      utilStorage.removerTokenNaStorage();
+
+      this.$router.replace({ path: "/login" });
     },
     handleFooterAction(action) {
       if (typeof this[action] === "function") {

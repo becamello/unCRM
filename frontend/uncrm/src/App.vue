@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-main>
-      <MenuLateral/>
+      <MenuLateral v-if="this.$router.currentRoute.name != 'Login'" />
       <router-view/>
       
     </v-main>

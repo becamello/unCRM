@@ -15,4 +15,26 @@ router.afterEach((to) => {
   document.title = `${pageTitle} - UnCRM`;
 });
 
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem("token");
+
+  if (to.name === "Login") {
+    if (token) {
+      next({ name: "Inicial" });
+    } else {
+      next();
+    }
+  } else if (to.meta.requiredAuth) {
+    if (!token || token === "undefined" || token === "") {
+      next({ path: "/login" });
+    } else {
+      next(); 
+    }
+  } else {
+    next(); 
+  }
+});
+
+
+
 export default router;
