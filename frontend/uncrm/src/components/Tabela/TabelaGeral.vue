@@ -10,7 +10,7 @@
                 </template>
                 <v-list dense>
                     <v-list-item v-for="(acao, index) in actions" :key="index" @click="acao.handler(item)"
-                        :disabled="acao.disabled?.(item)">
+                        :disabled="acao.disabled && acao.disabled(item)" >
                         <v-list-item-icon class="mr-2">
                             <v-icon small class="icon-table">
                                 {{ acao.icon }}
@@ -24,9 +24,9 @@
             </v-menu>
         </template>
 
-        <template v-slot:[`item.statusDescricao`]="{ item }">
-            <v-chip :color="statusChipColor(item.statusDescricao)" dark small outlined class="chip-status">
-                {{ item.statusDescricao }}
+        <template v-slot:[`item.statusItem`]="{ item }">
+            <v-chip :color="statusChipColor(item.statusItem)" dark small outlined class="chip-status">
+                {{ item.statusItem }}
             </v-chip>
         </template>
     </v-data-table>
@@ -70,7 +70,9 @@ export default {
         statusChipColor(status) {
             const colorsStatus = {
                 Aberto: "var(--success)",
-                Encerrado: "var(--error)"
+                Encerrado: "var(--error)",
+                Ativo: "var(--success)",
+                Inativo: "var(--error)"
             };
             return colorsStatus[status] || "grey"
         },

@@ -19,7 +19,7 @@ export default class Atendimento {
     1: "Encerrado",
   };
 
-  get statusDescricao() {
+  get statusItem() {
     return Atendimento.statusMap[this.status] || "Desconhecido";
   }
 
