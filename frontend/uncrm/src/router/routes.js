@@ -1,6 +1,7 @@
 import CRMAtendimentos from "@/views/CRM/Atendimentos.vue";
 import HomeView from "@/views/HomeView.vue";
 import LoginPage from "@/views/Login.vue";
+import InicialUsuarios from "@/views/Usuarios/InicialUsuarios.vue";
 
 const routes = [
   {
@@ -31,6 +32,15 @@ const routes = [
     component: CRMAtendimentos,
     meta: {
       title: "Atendimentos",
+      requiredAuth: true,
+    },
+  },
+  {
+    path: "/usuarios",
+    name: "Usuários",
+    component: InicialUsuarios,
+    meta: {
+      title: "Usuários",
       requiredAuth: true,
     },
   },
