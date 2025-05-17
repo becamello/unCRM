@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\rebec\\OneDrive\\Documentos\\UnCRM\\backend\\src\\UnCRM.Api\\UnCRM.Api.csproj": {}
+    "c:\\Users\\rebec\\OneDrive\\Documentos\\UnCRM\\backend\\src\\UnCRM.Api\\UnCRM.Api.csproj": {}
   },
   "projects": {
-    "C:\\Users\\rebec\\OneDrive\\Documentos\\UnCRM\\backend\\src\\UnCRM.Api\\UnCRM.Api.csproj": {
+    "c:\\Users\\rebec\\OneDrive\\Documentos\\UnCRM\\backend\\src\\UnCRM.Api\\UnCRM.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\rebec\\OneDrive\\Documentos\\UnCRM\\backend\\src\\UnCRM.Api\\UnCRM.Api.csproj",
+        "projectUniqueName": "c:\\Users\\rebec\\OneDrive\\Documentos\\UnCRM\\backend\\src\\UnCRM.Api\\UnCRM.Api.csproj",
         "projectName": "UnCRM.Api",
-        "projectPath": "C:\\Users\\rebec\\OneDrive\\Documentos\\UnCRM\\backend\\src\\UnCRM.Api\\UnCRM.Api.csproj",
+        "projectPath": "c:\\Users\\rebec\\OneDrive\\Documentos\\UnCRM\\backend\\src\\UnCRM.Api\\UnCRM.Api.csproj",
         "packagesPath": "C:\\Users\\rebec\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\rebec\\OneDrive\\Documentos\\UnCRM\\backend\\src\\UnCRM.Api\\obj\\",
+        "outputPath": "c:\\Users\\rebec\\OneDrive\\Documentos\\UnCRM\\backend\\src\\UnCRM.Api\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\rebec\\AppData\\Roaming\\NuGet\\NuGet.Config"

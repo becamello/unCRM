@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "3KhqGm5a7/vdzzlEdXfKtBVxOkcPlDy73aTqxq3Xw3grhSlpzf3+qFPc5WNxM7XaT6vguXFqlU4mKUm7kEB/Kw==",
+  "dgSpecHash": "26Ed/MuwP0WrqVb5/hz0m9m+I0aCKMbVzxafI7FQws79NWtpwwHz2LZDl6uNW8ZU3WvHjnq7c/opkf7122H81g==",
   "success": true,
-  "projectFilePath": "C:\\Users\\rebec\\OneDrive\\Documentos\\UnCRM\\backend\\src\\UnCRM.Api\\UnCRM.Api.csproj",
+  "projectFilePath": "c:\\Users\\rebec\\OneDrive\\Documentos\\UnCRM\\backend\\src\\UnCRM.Api\\UnCRM.Api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\rebec\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\rebec\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
