@@ -1,5 +1,12 @@
 <template>
-  <v-main class="pa-0">
+  <v-overlay v-if="isLoading" absolute>
+    <v-progress-circular
+      indeterminate
+      color="var(--primary-color)"
+      size="30"
+    ></v-progress-circular>
+  </v-overlay>
+  <v-main class="pa-0" v-else>
     <v-container fluid>
       <v-row>
         <v-col cols="12" md="12" class="pa-6">
@@ -91,6 +98,7 @@
                       item-text="nome"
                       item-value="id"
                       color="secondary"
+                      item-color="secondary"
                       :rules="[
                         (v) =>
                           (v !== undefined && v !== null) ||
@@ -184,10 +192,13 @@ export default {
           disabled: (usuario) => usuario.statusItem === "Inativo",
         },
       ],
+      isLoading: true,
     };
   },
   async mounted() {
-    this.usuarios = await carregarTodosUsuarios();
+    Promise.all([(this.usuarios = await carregarTodosUsuarios())]).finally(
+      () => (this.isLoading = false)
+    );
   },
   methods: {
     abrirModalCadastro() {
@@ -197,6 +208,7 @@ export default {
       this.modalVisivel = true;
     },
     async salvar() {
+      this.isLoading = true;
       try {
         if (this.modoCadastro) {
           await usuarioService.cadastrar(this.usuario);
@@ -209,6 +221,8 @@ export default {
       } catch (error) {
         console.error("Erro ao salvar usuário:", error);
         this.$toast.error("Erro ao salvar usuário.");
+      } finally {
+        this.isLoading = false;
       }
     },
     cancelar() {
@@ -221,12 +235,14 @@ export default {
       });
     },
     async inativarUsuario(usuario) {
+      this.isLoading = true;
       try {
         await usuarioService.inativar(usuario);
-        this.usuarios = await carregarTodosUsuarios(); 
+        this.usuarios = await carregarTodosUsuarios();
       } catch (error) {
         console.error(error);
       }
+      this.isLoading = false;
     },
   },
 };
