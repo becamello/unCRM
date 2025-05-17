@@ -51,41 +51,96 @@ namespace UnCRM.Api.Domain.Services.Classes
 
         public async Task<IEnumerable<AtendimentoQueryResponseContract>> ObterTodos()
         {
-            return await repository.Query()
+            var atendimentos = await repository.Query()
+                .Include(x => x.Pessoa)
+                .Include(x => x.TipoAtendimento)
                 .AsNoTracking()
-                .Select(x => new AtendimentoQueryResponseContract
-                {
-                    Id = x.Id,
-                    TipoAtendimentoId = x.TipoAtendimentoId,
-                    PessoaId = x.PessoaId,
-                    UsuarioCriadorId = x.UsuarioCriacaoId,
-                    StatusAtendimento = x.Status,
-                    ProximoContato = x.ProximoContato,
-                    DataCadastro = x.DataCadastro
-                })
                 .ToListAsync();
+
+            var usuarioIds = atendimentos
+                .Select(x => x.UsuarioCriacaoId)
+                .Concat(atendimentos
+                    .Where(x => x.ProximoContato != null)
+                    .Select(x => x.ProximoContato.Usuario))
+                .Distinct()
+                .ToList();
+
+            var usuarios = await usuarioRepository.Query()
+                .Where(u => usuarioIds.Contains(u.Id))
+                .ToDictionaryAsync(u => u.Id, u => u.Login);
+
+            return atendimentos.Select(x => new AtendimentoQueryResponseContract
+            {
+                Id = x.Id,
+                TipoAtendimentoId = x.TipoAtendimentoId,
+                TipoAtendimentoDescricao = x.TipoAtendimento?.Descricao,
+
+                PessoaId = x.PessoaId,
+                PessoaNome = x.Pessoa?.Nome,
+
+                UsuarioCriadorId = x.UsuarioCriacaoId,
+                UsuarioCriadorLogin = usuarios.GetValueOrDefault(x.UsuarioCriacaoId),
+
+                StatusAtendimento = x.Status,
+                DataCadastro = x.DataCadastro,
+
+                ProximoContato = x.ProximoContato is not null
+                    ? new DadosProximoContatoResponse
+                    {
+                        UsuarioId = x.ProximoContato.Usuario,
+                        UsuarioLogin = usuarios.GetValueOrDefault(x.ProximoContato.Usuario),
+                        Data = x.ProximoContato.Data
+                    }
+                    : null
+            }).ToList();
         }
 
         public async Task<AtendimentoResponseContract> ObterPorId(long id)
         {
             var atendimento = await repository.Query()
+                .Include(x => x.Pessoa)
+                .Include(x => x.TipoAtendimento)
                 .Include(x => x.Pareceres)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == id)
                 ?? throw new NotFoundException("Atendimento não encontrado");
 
+            var usuarioIds = new List<long> { atendimento.UsuarioCriacaoId };
+            if (atendimento.ProximoContato != null)
+                usuarioIds.Add(atendimento.ProximoContato.Usuario);
+
+            var usuarios = await usuarioRepository.Query()
+                .Where(u => usuarioIds.Contains(u.Id))
+                .ToDictionaryAsync(u => u.Id, u => u.Login);
+
             return new AtendimentoResponseContract
             {
                 Id = atendimento.Id,
                 TipoAtendimentoId = atendimento.TipoAtendimentoId,
+                TipoAtendimentoDescricao = atendimento.TipoAtendimento?.Descricao,
+
                 PessoaId = atendimento.PessoaId,
+                PessoaNome = atendimento.Pessoa?.Nome,
+
                 UsuarioCriadorId = atendimento.UsuarioCriacaoId,
+                UsuarioCriadorLogin = usuarios.GetValueOrDefault(atendimento.UsuarioCriacaoId),
+
                 StatusAtendimento = atendimento.Status,
-                ProximoContato = atendimento.ProximoContato,
-                Pareceres = atendimento.Pareceres.Select(x => new AtendimentoParecerResponseContract
+                DataCadastro = atendimento.DataCadastro,
+
+                ProximoContato = atendimento.ProximoContato != null
+                    ? new DadosProximoContatoResponse
+                    {
+                        UsuarioId = atendimento.ProximoContato.Usuario,
+                        UsuarioLogin = usuarios.GetValueOrDefault(atendimento.ProximoContato.Usuario),
+                        Data = atendimento.ProximoContato.Data
+                    }
+                    : null,
+
+                Pareceres = atendimento.Pareceres.Select(p => new AtendimentoParecerResponseContract
                 {
-                    Id = x.Id,
-                    Descricao = x.Descricao
+                    Id = p.Id,
+                    Descricao = p.Descricao
                 }).ToList()
             };
         }
