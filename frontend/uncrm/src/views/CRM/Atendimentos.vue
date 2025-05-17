@@ -96,10 +96,9 @@ import DataPicker from "@/components/Base/DataPicker.vue";
 
 import { icons } from "@/constants/icons";
 
-import usuarioService from "@/services/usuario-service";
 import atendimentoService from "@/services/atendimento-service";
+import { carregarTodosUsuarios } from '@/utils/usuarios';
 
-import Usuario from "@/models/Usuario";
 import Atendimento from "@/models/Atendimento";
 
 export default {
@@ -119,7 +118,7 @@ export default {
                 { text: "Pessoa", value: "pessoaNome", width: "34%" },
                 { text: "Próximo contato", value: "proximoContato.descricao", width: "20%" },
                 { text: "Cadastro", value: "dataUsuarioCadastro", width: "20%" },
-                { text: "Status", value: "statusDescricao", align: "center" },
+                { text: "Status", value: "statusItem", align: "center" },
                 { text: "Ações", value: "acoes", sortable: false },
             ],
             atendimentos: [],
@@ -154,10 +153,10 @@ export default {
             }
         };
     },
-    mounted() {
+    async mounted() {
         Promise.all([
             this.carregarAtendimentos(),
-            this.carregarUsuarios()
+             this.usuarios = await carregarTodosUsuarios()
         ]).finally(() => this.isLoading = false)
     },
     methods: {
@@ -181,15 +180,7 @@ export default {
         },
         abrirFiltro() {
             this.drawer = true;
-        },
-        async carregarUsuarios() {
-            try {
-                const resultado = await usuarioService.obterTodos();
-                this.usuarios = resultado.data.map((a) => new Usuario(a));
-            } catch (erro) {
-                console.error("Erro ao carregar usuários:", erro);
-            }
-        },
+        }
     }
 };
 </script>
