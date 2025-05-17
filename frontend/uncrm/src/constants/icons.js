@@ -12,6 +12,6 @@ export const icons = {
     historico: 'mdi-file-clock-outline',
     parecer: 'mdi-file-edit-outline',
     proximoContato: 'mdi-calendar-edit-outline',
-    inativarUsuario: 'mdi-account-off-outline',
+    inativar: 'mdi-account-off-outline',
     editar: 'mdi-pencil-outline'
 }

@@ -39,7 +39,7 @@
             :headers="headers"
             :items="usuarios"
             :actions="acoes"
-            :height="400"
+            height="72vh"
           ></tabela-geral>
         </v-col>
       </v-row>
@@ -185,7 +185,7 @@ export default {
         },
         {
           label: "Inativar usuário",
-          icon: icons.inativarUsuario,
+          icon: icons.inativar,
           handler: (usuario) => {
             this.inativarUsuario(usuario);
           },
@@ -208,6 +208,9 @@ export default {
       this.modalVisivel = true;
     },
     async salvar() {
+      const isValid = this.$refs.form.validate();
+      if (!isValid) return;
+
       this.isLoading = true;
       try {
         if (this.modoCadastro) {

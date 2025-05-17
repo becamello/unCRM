@@ -20,7 +20,7 @@
 
                     </v-row>
                     <tabela-geral :headers="headers" :items="atendimentos" :actions="acoes"
-                        :height="400"></tabela-geral>
+                        height="72vh"></tabela-geral>
                 </v-col>
 
                 <v-navigation-drawer v-model="drawer" bottom fixed temporary right :width="360">
