@@ -5,5 +5,11 @@ export const icons = {
     usuario: 'mdi-account-group-outline',
     pessoa: 'mdi-card-account-details-outline',
     alternarTema: 'mdi-theme-light-dark',
-    logout: 'mdi-logout'
+    logout: 'mdi-logout',
+    adicionar: 'mdi-plus',
+    filtro: 'mdi-filter-variant',
+    subMenu: 'mdi-dots-vertical',
+    historico: 'mdi-file-clock-outline',
+    parecer: 'mdi-file-edit-outline',
+    proximoContato: 'mdi-calendar-edit-outline',
 }
