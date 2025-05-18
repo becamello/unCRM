@@ -145,7 +145,7 @@ namespace UnCRM.Api.Domain.Services.Classes
             };
         }
 
-        public async Task Atualizar(long id, AtendimentoCriarRequestContract request)
+        public async Task Atualizar(long id, long usuarioLogadoId, AtendimentoCriarRequestContract request)
         {
             var atendimento = await repository.Obter(id)
                 ?? throw new NotFoundException("Atendimento não encontrado");
@@ -157,6 +157,11 @@ namespace UnCRM.Api.Domain.Services.Classes
             {
                 var proximoContato = new DadosProximoContato(request.ProximoContato.Usuario, request.ProximoContato.Data);
                 atendimento.RegistrarProximoContato(proximoContato);
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.Parecer))
+            {
+                atendimento.RegistrarParecer(usuarioLogadoId, request.Parecer);
             }
 
             await repository.Atualizar(atendimento);

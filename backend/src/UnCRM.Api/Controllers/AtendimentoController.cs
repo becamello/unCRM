@@ -19,7 +19,7 @@ namespace UnCRM.Api.Controllers
             return Created("", await _service.Criar(request, usuarioLogadoId));
         }
 
-        [HttpPost("/parecer")]
+        [HttpPost("/parecer/{id}")]
         [Authorize]
         public async Task<IActionResult> RegistrarParecer(long id, [FromBody] AtendimentoRegistrarParecerRequestContract request)
         {
@@ -45,7 +45,8 @@ namespace UnCRM.Api.Controllers
         [Authorize]
         public async Task<IActionResult> Atualizar(long id, [FromBody] AtendimentoCriarRequestContract request)
         {
-            await _service.Atualizar(id, request);
+            var usuarioLogadoId = ObterIdUsuarioLogado();
+            await _service.Atualizar(id, usuarioLogadoId, request);
             return NoContent();
         }
 
