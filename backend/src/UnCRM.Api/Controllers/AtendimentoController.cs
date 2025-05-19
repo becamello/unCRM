@@ -75,5 +75,14 @@ namespace UnCRM.Api.Controllers
             await _service.Encerrar(id);
             return NoContent();
         }
+
+        [HttpPut("{id}/proximo-contato")]
+        [Authorize]
+        public async Task<IActionResult> RegistrarProximoContato(long id, [FromBody] AtendimentoRegistrarProximoContatoRequestContract request)
+        {
+            await _service.RegistrarProximoContato(id, request);
+            return NoContent();
+        }
+
     }
 }

@@ -212,30 +212,20 @@ namespace UnCRM.Api.Domain.Services.Classes
 
             await repository.Atualizar(atendimento);
         }
-    }
 
-    public class AtendimentoRegistrarParecerRequestContract
-    {
-        public string Parecer { get; set; }
-    }
+        public async Task RegistrarProximoContato(long atendimentoId, AtendimentoRegistrarProximoContatoRequestContract request)
+        {
+            await request.Validar();
+            
+            var atendimento = await repository.Obter(atendimentoId)
+                ?? throw new NotFoundException("Atendimento não encontrado");
 
-    public class AtendimentoRegistrarParecerResponseContract
-    {
-        public long ParecerId { get; set; }
-        public long UsuarioCriadorId { get; set; }
-        public string Parecer { get; set; }
-    }
+            var proximoContato = new DadosProximoContato(request.Usuario, request.Data);
 
-    public class AtendimentoEditarParecerRequestContract
-    {
-        public long ParecerId { get; set; }
-        public string Descricao { get; set; }
-    }
+            atendimento.RegistrarProximoContato(proximoContato);
 
-    public class AtendimentoEditarParecerResponseContract
-    {
-        public long ParecerId { get; set; }
-        public long UsuarioCriadorId { get; set; }
-        public string Parecer { get; set; }
+            await repository.Atualizar(atendimento);
+        }
+
     }
 }
