@@ -38,6 +38,7 @@ namespace UnCRM.Api.Contract.Atendimento
         public long TipoAtendimentoId { get; set; }
         public long PessoaId { get; set; }
         public long UsuarioCriadorId { get; set; }
+        public string UsuarioCriadorLogin { get; set; }
         public StatusAtendimentoEnum StatusAtendimento { get; set; }
         public List<Parecer> Pareceres { get; set; }
         public string Descricao { get; set; }
