@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import usuarioService from "@/services/usuario-service";
+import usuarioService from "@/services/usuarioService";
 import utilStorage from "@/utils/storage";
 
 export default {
@@ -93,7 +93,6 @@ export default {
 
           utilStorage.salvarStorage(response.data.login);
           utilStorage.salvarTokenNaStorage(response.data.token);
-
           this.$router.push({ name: "Inicial" });
         })
         .catch((error) => {

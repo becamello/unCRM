@@ -5,16 +5,16 @@ import Parecer from "@/models/Parecer";
 function criar(atendimento, usuarioLogadoId) {
   return new Promise((resolve, reject) => {
     api
-      .post(`/atendimentos?usuarioLogadoId=${usuarioLogadoId}`, atendimento)
+      .post(`/atendimento?usuarioLogadoId=${usuarioLogadoId}`, atendimento)
       .then((response) => resolve(response.data))
       .catch((error) => reject(error));
   });
 }
 
-function registrarParecer(atendimentoId, usuarioLogadoId, request) {
+function registrarParecer(atendimentoId, request) {
   return new Promise((resolve, reject) => {
     api
-      .post(`/atendimentos/${atendimentoId}/parecer?usuarioLogadoId=${usuarioLogadoId}`, request)
+      .post(`/parecer/${atendimentoId}`, request)
       .then((response) => resolve(new Parecer(response.data)))
       .catch((error) => reject(error));
   });
@@ -35,8 +35,8 @@ function obterTodos() {
 function obterPorId(id) {
   return new Promise((resolve, reject) => {
     api
-      .get(`/atendimentos/${id}`)
-      .then((response) => resolve(new Atendimento(response.data)))
+      .get(`/atendimento/${id}`)
+      .then((response) => resolve(response))
       .catch((error) => reject(error));
   });
 }
@@ -44,7 +44,7 @@ function obterPorId(id) {
 function atualizar(atendimento) {
   return new Promise((resolve, reject) => {
     api
-      .put(`/atendimentos/${atendimento.id}`, atendimento)
+      .put(`/atendimento/${atendimento.id}`, atendimento)
       .then((response) => resolve(response.data))
       .catch((error) => reject(error));
   });
@@ -53,7 +53,7 @@ function atualizar(atendimento) {
 function editarParecer(atendimentoId, parecerId, request, usuarioLogadoId) {
   return new Promise((resolve, reject) => {
     api
-      .put(`/atendimentos/${atendimentoId}/parecer/${parecerId}?usuarioLogadoId=${usuarioLogadoId}`, request)
+      .put(`/atendimento/${atendimentoId}/parecer/${parecerId}?usuarioLogadoId=${usuarioLogadoId}`, request)
       .then((response) => resolve(new Parecer(response.data)))
       .catch((error) => reject(error));
   });
@@ -62,7 +62,7 @@ function editarParecer(atendimentoId, parecerId, request, usuarioLogadoId) {
 function reabrir(id, usuarioLogadoId) {
   return new Promise((resolve, reject) => {
     api
-      .post(`/atendimentos/${id}/reabrir?usuarioLogadoId=${usuarioLogadoId}`)
+      .put(`/atendimento/${id}/reabrir?usuarioLogadoId=${usuarioLogadoId}`)
       .then((response) => resolve(response.data))
       .catch((error) => reject(error));
   });
@@ -71,11 +71,40 @@ function reabrir(id, usuarioLogadoId) {
 function encerrar(id) {
   return new Promise((resolve, reject) => {
     api
-      .post(`/atendimentos/${id}/encerrar`)
+      .put(`/atendimento/${id}/encerrar`)
       .then((response) => resolve(response.data))
       .catch((error) => reject(error));
   });
 }
+
+function registrarProximoContato(id, request) {
+  return new Promise((resolve, reject) => {
+    api
+      .put(`/atendimento/${id}/proximo-contato`, request)
+      .then((response) => resolve(response.data))
+      .catch((error) => reject(error));
+  });
+}
+
+function registrarParecerComProximoContato(id, request) {
+  return new Promise((resolve, reject) => {
+    api
+      .post(`/atendimento/${id}/registrar-parecer-proximo-contato`, request)
+      .then((response) => resolve(response.data))
+      .catch((error) => reject(error));
+  });
+}
+
+function registrarParecerComEncerramento(id, request) {
+  return new Promise((resolve, reject) => {
+    api
+      .post(`/atendimento/${id}/registrar-parecer-encerrar`, request)
+      .then((response) => resolve(response.data))
+      .catch((error) => reject(error));
+  });
+}
+
+
 
 export default {
   criar,
@@ -86,4 +115,7 @@ export default {
   editarParecer,
   reabrir,
   encerrar,
+  registrarProximoContato,
+  registrarParecerComProximoContato,
+  registrarParecerComEncerramento
 };
