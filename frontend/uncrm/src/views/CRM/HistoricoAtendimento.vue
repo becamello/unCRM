@@ -20,50 +20,22 @@
               <breadcrumbs />
             </v-col>
           </v-row>
-          <v-row style="font-size: 14px" class="mb-1">
+          <v-row class="mb-1">
             <v-col cols="12" md="3" class="py-0">
-              <div>
-                <template>
-                  <v-icon small class="mr-2">
-                    {{ icons.codigoAtendimento }}
-                  </v-icon>
-                </template>
-                <span
-                  ><strong>Código:</strong> {{ atendimento.idFormatado }}</span
-                >
-              </div>
-              <div>
-                <template>
-                  <v-icon small class="mr-2">
-                    {{ icons.pessoa }}
-                  </v-icon>
-                </template>
-                <span
-                  ><strong>Pessoa:</strong> {{ atendimento.pessoaNome }}</span
-                >
-              </div>
+              <IconLabel :icon="icons.codigoAtendimento" label="Código">
+                {{ atendimento.idFormatado }}
+              </IconLabel>
+              <IconLabel :icon="icons.pessoa" label="Pessoa">
+                {{ atendimento.pessoaNome }}
+              </IconLabel>
             </v-col>
 
             <v-col cols="12" md="3" class="py-0">
-              <div>
-                <template>
-                  <v-icon small class="mr-2">
-                    {{ icons.tipoAtendimento }}
-                  </v-icon>
-                </template>
-                <span
-                  ><strong>Tipo atendimento:</strong>
-                  {{ atendimento.tipoAtendimentoDescricao }}</span
-                >
-              </div>
-              <div>
-                <template>
-                  <v-icon small class="mr-2">
-                    {{ icons.status }}
-                  </v-icon>
-                </template>
+              <IconLabel :icon="icons.tipoAtendimento" label="Tipo atendimento">
+                {{ atendimento.tipoAtendimentoDescricao }}
+              </IconLabel>
+              <IconLabel :icon="icons.status" label="Status">
                 <div class="status-wrapper">
-                  <strong>Status:</strong>
                   <v-chip
                     :color="statusChipColor(atendimento.statusItem)"
                     dark
@@ -74,55 +46,34 @@
                     {{ atendimento.statusItem }}
                   </v-chip>
                 </div>
-              </div>
+              </IconLabel>
             </v-col>
 
             <v-col cols="12" md="3" class="py-0">
-              <div>
-                <template>
-                  <v-icon small class="mr-2"> mdi-account </v-icon>
-                </template>
-                <span
-                  ><strong>Usuário de abertura:</strong>
-                  {{ atendimento.usuarioCriadorLogin }}</span
-                >
-              </div>
-              <div>
-                <template>
-                  <v-icon small class="mr-2">
-                    {{ icons.dataGenerico }}
-                  </v-icon>
-                </template>
-                <span
-                  ><strong>Data cadastro:</strong>
-                  {{ atendimento.dataCadastroFormatada }}</span
-                >
-              </div>
+              <IconLabel
+                :icon="icons.usuarioGenerico"
+                label="Usuário de abertura"
+              >
+                {{ atendimento.usuarioCriadorLogin }}
+              </IconLabel>
+              <IconLabel :icon="icons.dataGenerico" label="Data cadastro">
+                {{ atendimento.dataCadastroFormatada }}
+              </IconLabel>
             </v-col>
 
             <v-col cols="12" md="3" class="py-0">
-              <div>
-                <template>
-                  <v-icon small class="mr-2">
-                    {{ icons.usuarioGenerico }}
-                  </v-icon>
-                </template>
-                <span
-                  ><strong>Usuário próximo contato:</strong>
-                  {{ atendimento.proximoContato.usuarioLogin }}</span
-                >
-              </div>
-              <div>
-                <template>
-                  <v-icon small class="mr-2">
-                    {{ icons.dataGenerico }}
-                  </v-icon>
-                </template>
-                <span
-                  ><strong>Data próximo contato:</strong>
-                  {{ atendimento.proximoContato.dataFormatada }}</span
-                >
-              </div>
+              <IconLabel
+                :icon="icons.usuarioGenerico"
+                label="Usuário próximo contato"
+              >
+                {{ atendimento.proximoContato.usuarioLogin }}
+              </IconLabel>
+              <IconLabel
+                :icon="icons.dataGenerico"
+                label="Data próximo contato"
+              >
+                {{ atendimento.proximoContato.dataFormatada }}
+              </IconLabel>
             </v-col>
           </v-row>
         </v-col>
@@ -130,44 +81,14 @@
       <v-row>
         <v-col cols="12" md="12">
           <div style="max-height: 50vh; overflow-y: auto">
-            <v-card
-              :key="parecer.id"
+            <ParecerCard
               v-for="parecer in atendimento.pareceres"
-              class="mb-3 parecer"
-              elevation="0"
-            >
-              <v-card-text>
-                <v-card-actions
-                  class="d-flex align-center justify-space-between pa-0 pb-4"
-                >
-                  <p class="ma-0">
-                    {{ parecer.usuarioCriadorLogin }}
-                  </p>
-                  <v-tooltip bottom>
-                    <template v-slot:activator="{ on, attrs }">
-                      <span v-bind="attrs" v-on="on">
-                        <v-btn
-                          icon
-                          v-if="
-                            Number(parecer.usuarioCriadorId) ===
-                            Number(usuarioLogadoId)
-                          "
-                          :disabled="atendimentoEncerrado"
-                          ><v-icon dense>{{ icons.editar }}</v-icon></v-btn
-                        >
-                      </span>
-                    </template>
-                    <span v-if="atendimentoEncerrado">
-                      Atendimentos encerrados não podem ser editados
-                    </span>
-                    <span v-else> Editar parecer </span>
-                  </v-tooltip>
-                </v-card-actions>
-                <div class="text--primary">
-                  {{ parecer.descricao }}
-                </div>
-              </v-card-text>
-            </v-card>
+              :key="parecer.id"
+              :parecer="parecer"
+              :icons="icons"
+              :usuario-logado-id="usuarioLogadoId"
+              :atendimento-encerrado="atendimentoEncerrado"
+            />
           </div>
         </v-col>
       </v-row>
@@ -188,15 +109,24 @@
             />
           </v-col>
           <v-col cols="2" md="1" sm="1">
-            <v-btn
-              color="primary"
-              fab
-              elevation="0"
-              :small="$vuetify.breakpoint.smAndDown"
-              :disabled="atendimentoEncerrado"
-              @click="abrirModal"
-              ><v-icon>{{ icons.registrarParecer }}</v-icon></v-btn
-            >
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <span v-bind="attrs" v-on="on">
+                  <v-btn
+                    color="primary"
+                    fab
+                    elevation="0"
+                    :small="$vuetify.breakpoint.smAndDown"
+                    :disabled="atendimentoEncerrado"
+                    @click="abrirModal"
+                    ><v-icon>{{ icons.registrarParecer }}</v-icon></v-btn
+                  >
+                </span>
+              </template>
+              <span v-if="atendimentoEncerrado">
+                Atendimentos encerrados não aceitam novos pareceres
+              </span>
+            </v-tooltip>
           </v-col>
         </v-row>
       </v-form>
@@ -262,6 +192,8 @@ import { carregarTodosUsuariosAtivos } from "@/utils/usuarios";
 import Breadcrumbs from "@/components/Breadcrumbs.vue";
 import ModalFormulario from "@/components/Base/ModalFormulario.vue";
 import DataPicker from "@/components/Base/DataPicker.vue";
+import IconLabel from "@/components/Atendimento/IconLabel.vue";
+import ParecerCard from "@/components/Atendimento/ParecerCard.vue";
 import { icons } from "@/constants/icons";
 
 export default {
@@ -269,6 +201,8 @@ export default {
     Breadcrumbs,
     ModalFormulario,
     DataPicker,
+    IconLabel,
+    ParecerCard,
   },
   data() {
     return {
@@ -289,8 +223,6 @@ export default {
   async mounted() {
     Promise.all([
       this.carregarAtendimento(),
-      console.log("Usuário logado ID:", this.usuarioLogadoId),
-
       (this.usuarios = await carregarTodosUsuariosAtivos()),
     ]).finally(() => {
       this.isLoading = false;
@@ -368,8 +300,6 @@ export default {
     cancelar() {
       this.modalVisivel = false;
       this.parecerAcao = null;
-      this.data = "";
-      this.usuario = "";
     },
     statusChipColor(status) {
       const colorsStatus = {
@@ -391,14 +321,12 @@ export default {
 }
 
 .chip-status {
-  width: 90px;
-  display: flex;
+  width: 70px;
+  padding: 0 10px;
   justify-content: center;
 }
 
 .status-wrapper {
   display: inline-flex;
-  align-items: center;
-  gap: 8px;
 }
 </style>
