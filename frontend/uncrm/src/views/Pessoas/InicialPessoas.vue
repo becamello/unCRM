@@ -49,13 +49,14 @@
         :titulo-modal="tituloModal"
         @salvar="salvar"
         @cancelar="cancelar"
+        width="50%"
       >
         <v-row>
           <v-col cols="12" md="12">
             <v-form ref="form" lazy-validation>
               <v-col cols="12">
                 <v-row>
-                  <v-col cols="12" md="8" sm="12">
+                  <v-col cols="12" md="8" sm="12" class="pa-0 px-2">
                     <v-text-field
                       v-model="pessoa.nome"
                       :rules="[(v) => !!v || 'O nome é obrigatório']"
@@ -65,30 +66,29 @@
                       color="secondary"
                     />
                   </v-col>
-                  <v-col cols="12" md="4" sm="12">
+                  <v-col cols="12" md="4" sm="12" class="pa-0 px-2">
                     <v-text-field
                       v-model="pessoa.nomeCurto"
-                      :rules="[(v) => !!v || 'O nome curto é obrigatório']"
-                      label="Nome curto"
-                      required
                       outlined
+                      @click:append="show = !show"
+                      label="Nome curto"
+                      :rules="[(v) => !!v || 'O nome curto é obrigatório']"
                       color="secondary"
-                    />
+                    ></v-text-field>
                   </v-col>
                 </v-row>
                 <v-row>
-                  <v-col cols="12" md="8" sm="12">
+                  <v-col cols="12" md="8" sm="12" class="pa-0 px-2">
                     <v-text-field
                       v-model="pessoa.cpfCnpj"
-                      :rules="[(v) => !!v || 'O CPF ou CNPJ é obrigatório']"
+                      :rules="[(v) => !!v || 'O CPF/CNPJ é obrigatório']"
                       label="CPF/CNPJ"
                       required
                       outlined
                       color="secondary"
                     />
                   </v-col>
-
-                  <v-col cols="12" md="4" sm="12">
+                  <v-col cols="12" md="4" sm="12" class="pa-0 px-2">
                     <v-select
                       label="Tipo de pessoa"
                       v-model="pessoa.tipoPessoa"
@@ -108,7 +108,6 @@
                   </v-col>
                 </v-row>
               </v-col>
-              <v-row> </v-row>
             </v-form>
           </v-col>
         </v-row>
@@ -127,7 +126,7 @@ import { icons } from "@/constants/icons";
 import { carregarTodasPessoas } from "@/utils/pessoas";
 
 import Pessoa from "@/models/Pessoa";
-import pessoaService from "@/services/pessoa-service";
+import pessoaService from "@/services/pessoaService";
 
 export default {
   name: "InicialPessoas",

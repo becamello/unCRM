@@ -49,13 +49,14 @@
         :titulo-modal="tituloModal"
         @salvar="salvar"
         @cancelar="cancelar"
+        width="50%"
       >
         <v-row>
           <v-col cols="12" md="12">
             <v-form ref="form" lazy-validation>
               <v-col cols="12">
                 <v-row>
-                  <v-col cols="12" md="8" sm="12">
+                  <v-col cols="12" md="8" sm="12" class="pa-0 px-2">
                     <v-text-field
                       v-model="usuario.login"
                       :rules="[(v) => !!v || 'O login é obrigatório']"
@@ -65,7 +66,7 @@
                       color="secondary"
                     />
                   </v-col>
-                  <v-col cols="12" md="4" sm="12">
+                  <v-col cols="12" md="4" sm="12" class="pa-0 px-2">
                     <v-text-field
                       v-model="usuario.senha"
                       :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
@@ -79,7 +80,7 @@
                   </v-col>
                 </v-row>
                 <v-row>
-                  <v-col cols="12" md="8" sm="12">
+                  <v-col cols="12" md="8" sm="12" class="pa-0 px-2">
                     <v-text-field
                       v-model="usuario.nome"
                       :rules="[(v) => !!v || 'O nome é obrigatório']"
@@ -89,8 +90,7 @@
                       color="secondary"
                     />
                   </v-col>
-
-                  <v-col cols="12" md="4" sm="12">
+                  <v-col cols="12" md="4" sm="12" class="pa-0 px-2">
                     <v-select
                       label="Cargo"
                       v-model="usuario.cargo"
@@ -110,7 +110,6 @@
                   </v-col>
                 </v-row>
               </v-col>
-              <v-row> </v-row>
             </v-form>
           </v-col>
         </v-row>
@@ -129,7 +128,7 @@ import { icons } from "@/constants/icons";
 import { carregarTodosUsuarios } from "@/utils/usuarios";
 
 import Usuario from "@/models/Usuario";
-import usuarioService from "@/services/usuario-service";
+import usuarioService from "@/services/usuarioService";
 
 export default {
   name: "InicialUsuarios",
@@ -172,13 +171,13 @@ export default {
               .then((response) => {
                 this.usuario = new Usuario(response.data);
                 this.modoCadastro = false;
-                this.tituloModal = "Editar Usuário";
+                this.tituloModal = "Editar usuário";
                 this.modalVisivel = true;
                 this.usuario.senha = "";
               })
               .catch((error) => {
                 console.error("Erro ao obter usuario:", error);
-                this.$toast.error("Erro ao carregar usuario para edição");
+                // this.$toast.error("Erro ao carregar usuario para edição");
               });
           },
           disabled: (usuario) => usuario.statusItem === "Inativo",
@@ -202,7 +201,7 @@ export default {
   },
   methods: {
     abrirModalCadastro() {
-      this.tituloModal = "Cadastrar Usuário";
+      this.tituloModal = "Cadastrar usuário";
       this.usuario = new Usuario();
       this.modoCadastro = true;
       this.modalVisivel = true;
