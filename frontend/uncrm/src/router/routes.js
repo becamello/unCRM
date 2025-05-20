@@ -1,4 +1,5 @@
 import CRMAtendimentos from "@/views/CRM/Atendimentos.vue";
+import HistoricoAtendimento from "@/views/CRM/HistoricoAtendimento.vue";
 import HomeView from "@/views/HomeView.vue";
 import LoginPage from "@/views/Login.vue";
 import InicialPessoas from "@/views/Pessoas/InicialPessoas.vue";
@@ -33,6 +34,15 @@ const routes = [
     component: CRMAtendimentos,
     meta: {
       title: "Atendimentos",
+      requiredAuth: true,
+    },
+  },
+  {
+    path: "/historico-atendimento/:id",
+    name: "HistoricoAtendimento",
+    component: HistoricoAtendimento,
+    meta: {
+      title: "Histórico atendimento",
       requiredAuth: true,
     },
   },

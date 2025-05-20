@@ -9,9 +9,15 @@ export const icons = {
     adicionar: 'mdi-plus',
     filtro: 'mdi-filter-variant',
     subMenu: 'mdi-dots-vertical',
-    historico: 'mdi-file-clock-outline',
-    parecer: 'mdi-file-edit-outline',
-    proximoContato: 'mdi-calendar-edit-outline',
+    historico: 'mdi-file-eye-outline', 
+    alterarProximoContato: 'mdi-calendar-edit-outline',
+    tipoAtendimento: 'mdi-tag-outline',
     inativar: 'mdi-account-off-outline',
-    editar: 'mdi-pencil-outline'
+    editar: 'mdi-pencil-outline',
+    dataGenerico: 'mdi-calendar-blank-outline',
+    usuarioGenerico: 'mdi-account',
+    registrarParecer: 'mdi-send-variant-outline',
+    status: 'mdi-progress-helper',
+    reabrir: 'mdi-restore',
+    codigoAtendimento: 'mdi-information-slab-circle-outline'
 }

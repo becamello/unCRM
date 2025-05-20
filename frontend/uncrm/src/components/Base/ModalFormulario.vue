@@ -1,15 +1,15 @@
 <template>
-  <v-dialog v-model="dialogInterno" max-width="50%" persistent >
-    <v-card>
-      <v-card-title class="headline" style="color: var(--text-primary);">
+  <v-dialog v-model="dialogInterno" v-bind="$attrs" persistent>
+    <v-card class="pa-2">
+      <v-card-title class="headline pa-4 mb-4" style="color: var(--text-primary);">
         {{ tituloModal }}
       </v-card-title>
 
-      <v-card-text class="pa-3">
+      <v-card-text class="px-4 pa-0">
         <slot />
       </v-card-text>
 
-      <v-card-actions class="d-flex justify-end pa-6">
+      <v-card-actions class="d-flex justify-end pa-2 pt-4">
         <BotaoBase variante="secundario" @click="$emit('cancelar')" width="20%">Cancelar</BotaoBase>
         <BotaoBase variante="primario" @click="$emit('salvar')" width="20%">Salvar</BotaoBase>
       </v-card-actions>

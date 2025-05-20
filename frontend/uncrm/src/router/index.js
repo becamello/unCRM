@@ -18,9 +18,9 @@ router.afterEach((to) => {
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem("token");
 
-  if (to.name === "Login") {
-    if (token) {
-      next({ name: "Inicial" });
+  if (to.name === "Inicial") {
+    if (!token) {
+      next({ name: "Login" });
     } else {
       next();
     }

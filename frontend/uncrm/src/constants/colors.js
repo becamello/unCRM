@@ -6,7 +6,8 @@ const lightTheme = {
   warning: "#F1C40F",
   info: "#3498DB",
 
-  "text-primary": "#534194"
+  "text-primary": "#534194",
+  "background-parecer": '#f0f0f0'
 };
 
 const darkTheme = {
@@ -17,7 +18,8 @@ const darkTheme = {
   warning: "#FDD835",
   info: "#64B5F6",
 
-  "text-primary": "#fff"
+  "text-primary": "#fff",
+  "background-parecer": '#1e1e1e'
 };
 
 function themeVars(theme) {

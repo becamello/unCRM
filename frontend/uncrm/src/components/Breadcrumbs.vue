@@ -1,5 +1,5 @@
 <template>
-  <v-breadcrumbs divider="/" class="pa-2">
+  <v-breadcrumbs divider="/" class="pa-0 py-2">
     <v-breadcrumbs-item
       v-for="(crumb, index) in breadcrumbs"
       :key="index"

@@ -8,78 +8,83 @@
   >
     <template #activator="{ on, attrs }">
       <v-text-field
-        color="secondary"
         v-model="formattedDate"
         :label="label"
         prepend-inner-icon="mdi-calendar"
-        v-bind="attrs"
-        v-on="on"
+        color="secondary"
         outlined
         clearable
-        dense
-        @click:clear="clearDate"
-      ></v-text-field>
+        :dense="dense"
+        v-bind="attrs"
+        v-on="on"
+        :rules="rules"
+      />
     </template>
+
     <v-date-picker
       v-model="internalDate"
       locale="pt-br"
-      @input="selectDate"
       no-title
       :show-current="false"
       color="var(--text-primary)"
-    ></v-date-picker>
+      @input="onSelectDate"
+    />
   </v-menu>
 </template>
 
 <script>
 export default {
+  inheritAttrs: false,
   props: {
     value: String,
-    label: {
-      type: String,
-      default: 'Data de Cadastro',
-    },
+    label: { type: String, default: "Data" },
+    rules: { type: Array, default: () => [] },
+    dense: { type: Boolean, default: false }, 
   },
   data() {
     return {
       menu: false,
-      internalDate: this.value,  
+      internalDate: this.value || null,
     };
   },
   computed: {
     formattedDate: {
       get() {
-        if (!this.internalDate) return ''
-        const [year, month, day] = this.internalDate.split('-')
-        return `${day}/${month}/${year}`
+        if (!this.internalDate) return "";
+        const [year, month, day] = this.internalDate.split("-");
+        return `${day}/${month}/${year}`;
       },
-      set(newValue) {
-        const [month, year, day] = newValue.split('-');
-        this.internalDate = `${day}/${month}/${year}`; 
-        this.$emit('input', this.internalDate); 
+      set(val) {
+        if (!val) {
+          this.updateDate(null);
+          return;
+        }
+        const [day, month, year] = val.split("/");
+        this.updateDate(`${year}-${month}-${day}`);
       },
     },
   },
   watch: {
-    value(newValue) {
-      this.internalDate = newValue;
+    value(val) {
+      this.internalDate = val;
     },
   },
   methods: {
-    selectDate(date) {
-      this.menu = false;
-      this.$emit('input', date); 
+    updateDate(date) {
+      this.internalDate = date;
+      this.$emit("input", date);
     },
-    clearDate() {
-      this.internalDate = null;
-      this.$emit('input', null); 
+    onSelectDate(date) {
+      this.menu = false;
+      this.updateDate(date);
     },
   },
 };
 </script>
 
 <style scoped>
-::v-deep .v-btn.v-btn--active.v-btn--rounded, ::v-deep .v-btn.v-size--default.v-btn--active{
-    background-color: var(--primary)!important;
+::v-deep .v-btn.v-btn--active.v-btn--rounded,
+::v-deep .v-btn.v-size--default.v-btn--active {
+  background-color: var(--primary) !important;
 }
 </style>
