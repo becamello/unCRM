@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using UnCRM.Api.Contract.Atendimento;
+using UnCRM.Api.Contract.Atendimento.Request;
 using UnCRM.Api.Domain.Enums;
 using UnCRM.Api.Domain.Models;
 using UnCRM.Api.Domain.Repository.Interfaces;
@@ -109,6 +110,8 @@ namespace UnCRM.Api.Domain.Services.Classes
             if (atendimento.ProximoContato != null)
                 usuarioIds.Add(atendimento.ProximoContato.Usuario);
 
+            usuarioIds.AddRange(atendimento.Pareceres.Select(p => p.UsuarioCriacaoId));
+
             var usuarios = await usuarioRepository.Query()
                 .Where(u => usuarioIds.Contains(u.Id))
                 .ToDictionaryAsync(u => u.Id, u => u.Login);
@@ -140,7 +143,12 @@ namespace UnCRM.Api.Domain.Services.Classes
                 Pareceres = atendimento.Pareceres.Select(p => new AtendimentoParecerResponseContract
                 {
                     Id = p.Id,
-                    Descricao = p.Descricao
+                    Descricao = p.Descricao,
+                    TipoAtendimentoId = atendimento.TipoAtendimentoId,
+                    PessoaId = atendimento.PessoaId,
+                    UsuarioCriadorId = p.UsuarioCriacaoId,
+                    UsuarioCriadorLogin = usuarios.GetValueOrDefault(p.UsuarioCriacaoId),
+                    StatusAtendimento = atendimento.Status,
                 }).ToList()
             };
         }
@@ -216,7 +224,7 @@ namespace UnCRM.Api.Domain.Services.Classes
         public async Task RegistrarProximoContato(long atendimentoId, AtendimentoRegistrarProximoContatoRequestContract request)
         {
             await request.Validar();
-            
+
             var atendimento = await repository.Obter(atendimentoId)
                 ?? throw new NotFoundException("Atendimento não encontrado");
 
@@ -226,6 +234,33 @@ namespace UnCRM.Api.Domain.Services.Classes
 
             await repository.Atualizar(atendimento);
         }
+
+        public async Task RegistrarParecerEProximoContato(long id, long usuarioLogadoId, AtendimentoRegistrarParecerProximoContatoRequestContract request)
+        {
+            await request.Validar();
+
+            var atendimento = await repository.Obter(id)
+                ?? throw new NotFoundException("Atendimento não localizado");
+
+            atendimento.RegistrarParecer(usuarioLogadoId, request.Parecer);
+
+            var proximoContato = new DadosProximoContato(request.ProximoContato.Usuario, request.ProximoContato.Data);
+            atendimento.RegistrarProximoContato(proximoContato);
+
+            await repository.Atualizar(atendimento);
+        }
+
+        public async Task RegistrarParecerEEncerrar(long id, long usuarioLogadoId, AtendimentoRegistrarParecerRequestContract request)
+        {
+            var atendimento = await repository.Obter(id)
+                ?? throw new NotFoundException("Atendimento não localizado");
+
+            atendimento.RegistrarParecer(usuarioLogadoId, request.Parecer);
+            atendimento.Encerrar();
+
+            await repository.Atualizar(atendimento);
+        }
+
 
     }
 }

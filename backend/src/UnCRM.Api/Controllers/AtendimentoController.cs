@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UnCRM.Api.Contract.Atendimento;
+using UnCRM.Api.Contract.Atendimento.Request;
 using UnCRM.Api.Domain.Services.Classes;
 
 namespace UnCRM.Api.Controllers
@@ -84,5 +85,20 @@ namespace UnCRM.Api.Controllers
             return NoContent();
         }
 
+        [HttpPost("{id}/registrar-parecer-encerrar")]
+        public async Task<IActionResult> RegistrarParecerEEncerrar(long id, [FromBody] AtendimentoRegistrarParecerRequestContract request)
+        {
+            var usuarioLogadoId = ObterIdUsuarioLogado();
+            await _service.RegistrarParecerEEncerrar(id, usuarioLogadoId, request);
+            return Ok();
+        }
+
+        [HttpPost("{id}/registrar-parecer-proximo-contato")]
+        public async Task<IActionResult> RegistrarParecerEProximoContato(long id, [FromBody] AtendimentoRegistrarParecerProximoContatoRequestContract request)
+        {
+            var usuarioLogadoId = ObterIdUsuarioLogado();
+            await _service.RegistrarParecerEProximoContato(id, usuarioLogadoId, request);
+            return Ok();
+        }
     }
 }
