@@ -16,24 +16,28 @@
         <v-card elevation="5" class="card-form-login">
           <v-card-title class="login-title">BEM-VINDO!</v-card-title>
           <v-card-text>
-            <v-text-field
-              outlined
-              color="var(--neutral-dark)"
-              label="Login"
-              placeholder="Insira seu login de acesso"
-              v-model="usuario.login"
-            ></v-text-field>
+            <v-form ref="form" lazy-validation>
+              <v-text-field
+                outlined
+                color="var(--neutral-dark)"
+                label="Login"
+                placeholder="Insira seu login de acesso"
+                v-model="usuario.login"
+                :rules="[(v) => !!v || 'O login é obrigatório']"
+              ></v-text-field>
 
-            <v-text-field
-              :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-              :type="show ? 'text' : 'password'"
-              outlined
-              @click:append="show = !show"
-              name="Senha"
-              label="Senha"
-              color="var(--neutral-dark)"
-              v-model="usuario.senha"
-            ></v-text-field>
+              <v-text-field
+                :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+                :type="show ? 'text' : 'password'"
+                outlined
+                @click:append="show = !show"
+                name="Senha"
+                label="Senha"
+                color="var(--neutral-dark)"
+                v-model="usuario.senha"
+                :rules="[(v) => !!v || 'A senha é obrigatória']"
+              ></v-text-field>
+            </v-form>
           </v-card-text>
           <v-card-actions class="d-flex align-center justify-center">
             <v-btn
@@ -66,7 +70,7 @@ import utilStorage from "@/utils/storage";
 
 export default {
   name: "LoginPage",
-
+  inject: ["showToast"],
   data() {
     return {
       show: false,
@@ -79,8 +83,13 @@ export default {
   },
   methods: {
     login() {
-      if (!this.usuario.login || !this.usuario.senha) {
-        console.log("Insira dados");
+      const isValid = this.$refs.form.validate();
+      if (!isValid) {
+        this.showToast(
+          "Atenção",
+          "Preencha seus dados para continuar.",
+          "warning"
+        );
         return;
       }
 
@@ -98,7 +107,11 @@ export default {
         .catch((error) => {
           console.error(error);
           this.isLoading = false;
-          console.log("Erro ao realizar login. Dados inválidos");
+          this.showToast(
+            "Erro",
+            "Não foi possível realizar login. Verifique os dados informados",
+            "error"
+          );
         });
     },
   },

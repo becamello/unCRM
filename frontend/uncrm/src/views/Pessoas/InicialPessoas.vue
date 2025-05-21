@@ -130,6 +130,7 @@ import pessoaService from "@/services/pessoaService";
 
 export default {
   name: "InicialPessoas",
+  inject: ['showToast'],
   components: {
     Breadcrumbs,
     BotaoBase,
@@ -175,7 +176,7 @@ export default {
               })
               .catch((error) => {
                 console.error("Erro ao obter pessoa:", error);
-                this.$toast.error("Erro ao carregar pessoa para edição");
+                this.showToast("Erro", "Erro ao carregar usuário para edição", "error");
               });
           },
           disabled: (pessoa) => pessoa.statusItem === "Inativo",
@@ -206,21 +207,23 @@ export default {
     },
     async salvar() {
       const isValid = this.$refs.form.validate();
-      if (!isValid) return; 
+      if (!isValid) return;
 
       this.isLoading = true;
       try {
         if (this.modoCadastro) {
           await pessoaService.cadastrar(this.pessoa);
+          this.showToast("Sucesso!", "Pessoa cadastrada com sucesso.", "success");
         } else {
           await pessoaService.atualizar(this.pessoa);
+          this.showToast("Sucesso!", "Pessoa editada com sucesso.", "success");
         }
         this.modalVisivel = false;
         this.pessoa = new Pessoa();
         this.pessoas = await carregarTodasPessoas();
       } catch (error) {
-        console.error("Erro ao salvar usuário:", error);
-        this.$toast.error("Erro ao salvar usuário.");
+        console.error(error);
+        this.showToast("Erro", "Não foi possível salvar a pessoa.", "error");
       } finally {
         this.isLoading = false;
       }
@@ -239,8 +242,10 @@ export default {
       try {
         await pessoaService.inativar(pessoa);
         this.pessoas = await carregarTodasPessoas();
+        this.showToast("Sucesso!", "Pessoa inativada com sucesso.", "success");
       } catch (error) {
         console.error(error);
+        this.showToast("Erro", "Não foi possível inativar a pessoa.", "error");
       }
       this.isLoading = false;
     },

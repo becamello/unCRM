@@ -102,6 +102,7 @@
         </v-row>
       </v-form>
       <ModalFormulario
+      v-if="modalVisivel"
         v-model="modalVisivel"
         @cancelar="cancelar"
         @salvar="aoSalvarParecer"
@@ -111,59 +112,43 @@
         <v-overlay v-if="isSubmitting" absolute>
           <v-progress-circular indeterminate color="primary" size="30" />
         </v-overlay>
+        <template v-if="estaEditandoParecer">
+          <v-textarea
+            v-model="parecerEditando.descricao"
+            label="Descrição do parecer"
+            outlined
+            rows="5"
+            clearable
+            required
+            :rules="[(v) => !!v || 'Descrição obrigatória']"
+          />
+        </template>
 
-        <v-form ref="formModal" lazy-validation>
-          <template v-if="estaEditandoParecer">
-            <v-textarea
-              v-model="parecerEditando.descricao"
-              label="Descrição do parecer"
-              outlined
-              rows="5"
-              clearable
+        <template v-else>
+          <v-radio-group v-model="parecerAcao" class="mb-4">
+            <v-radio label="Encerrar atendimento" value="encerrar"></v-radio>
+            <v-radio label="Definir próximo contato" value="proximo"></v-radio>
+          </v-radio-group>
+
+          <div v-if="parecerAcao === 'proximo'">
+            <DataPicker
+              v-model="tempProximoContatoData"
+              label="Data próximo contato"
               required
-              :rules="[(v) => !!v || 'Descrição obrigatória']"
             />
-          </template>
-
-          <template v-else>
-            <v-radio-group v-model="parecerAcao" class="mb-4">
-              <v-radio label="Encerrar atendimento" value="encerrar"></v-radio>
-              <v-radio
-                label="Definir próximo contato"
-                value="proximo"
-              ></v-radio>
-            </v-radio-group>
-
-            <div v-if="parecerAcao === 'proximo'">
-              <DataPicker
-                v-model="tempProximoContatoData"
-                label="Data próximo contato"
-                required
-                :rules="[
-                  (v) =>
-                    (v !== undefined && v !== null) ||
-                    'A data de próximo contato é obrigatória',
-                ]"
-              />
-              <v-autocomplete
-                v-model="tempProximoContatoUsuario"
-                outlined
-                required
-                :items="usuarios"
-                item-value="id"
-                item-text="login"
-                label="Usuário próximo contato"
-                color="secondary"
-                item-color="secondary"
-                :rules="[
-                  (v) =>
-                    (v !== undefined && v !== null) ||
-                    'O usuário de próximo contato é obrigatório',
-                ]"
-              />
-            </div>
-          </template>
-        </v-form>
+            <v-autocomplete
+              v-model="tempProximoContatoUsuario"
+              outlined
+              required
+              :items="usuarios"
+              item-value="id"
+              item-text="login"
+              label="Usuário próximo contato"
+              color="secondary"
+              item-color="secondary"
+            />
+          </div>
+        </template>
       </ModalFormulario>
     </v-container>
   </v-main>
@@ -186,6 +171,7 @@ import ParecerCard from "@/components/Atendimento/ParecerCard.vue";
 import { icons } from "@/constants/icons";
 
 export default {
+  inject: ["showToast"],
   components: {
     Breadcrumbs,
     ModalFormulario,
@@ -239,6 +225,11 @@ export default {
         this.atendimento = new Atendimento(atendimentoData);
       } catch (error) {
         console.error("Erro ao carregar atendimento:", error);
+        this.showToast(
+          "Erro",
+          "Erro ao carregar os dados do atendimento. Tente novamente mais tarde.",
+          "error"
+        );
       }
     },
     infosPrincipais() {
@@ -301,7 +292,14 @@ export default {
       }
     },
     async confirmarAcaoParecer() {
-      if (!this.parecerAcao) return;
+      if (!this.parecerAcao) {
+        this.showToast(
+          "Atenção!",
+          "Selecione uma ação: encerrar atendimento ou definir próximo contato.",
+          "warning"
+        );
+        return;
+      }
 
       const parecerDescricao = this.parecer.parecer || this.parecer;
       const atendimentoId = this.atendimento.id;
@@ -313,6 +311,11 @@ export default {
           await atendimentoService.registrarParecerComEncerramento(
             atendimentoId,
             { parecer: parecerDescricao }
+          );
+          this.showToast(
+            "Sucesso!",
+            "Parecer registrado e atendimento encerrado.",
+            "success"
           );
         }
 
@@ -334,6 +337,11 @@ export default {
               },
             }
           );
+          this.showToast(
+            "Sucesso!",
+            "Parecer registrado e próximo contato definido.",
+            "success"
+          );
         }
         this.cancelar();
         this.parecer = new Parecer();
@@ -341,6 +349,11 @@ export default {
         await this.carregarAtendimento();
       } catch (e) {
         console.error(e);
+        this.showToast(
+          "Erro",
+          "Erro ao registrar o parecer. Verifique os dados e tente novamente.",
+          "error"
+        );
       } finally {
         this.isSubmitting = false;
       }
@@ -366,7 +379,6 @@ export default {
     },
     async salvarEdicaoParecer() {
       if (!this.parecerEditando.descricao) {
-        alert("Descrição obrigatória.");
         return;
       }
 
@@ -380,11 +392,17 @@ export default {
           },
           this.usuarioLogadoId
         );
+        this.showToast("Sucesso!", "Parecer atualizado.", "success");
 
         this.cancelar();
         await this.carregarAtendimento();
       } catch (e) {
         console.error("Erro ao editar parecer:", e);
+        this.showToast(
+          "Erro",
+          "Erro ao editar o parecer. Tente novamente.",
+          "error"
+        );
       } finally {
         this.isSubmitting = false;
       }

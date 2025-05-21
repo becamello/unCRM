@@ -2,21 +2,33 @@
   <v-app>
     <v-main>
       <MenuLateral v-if="this.$router.currentRoute.name != 'Login'" />
-      <router-view/>
-      
+      <ToastContainer ref="toastRef" />
+      <router-view />
     </v-main>
   </v-app>
 </template>
 
 <script>
 import MenuLateral from "./components/Menu/MenuLateral.vue";
+import ToastContainer from "./components/Base/Toast/ToastContainer.vue";
 
 export default {
-  name: 'App',
+  name: "App",
 
-   components: {
+  components: {
     MenuLateral,
-  }
+    ToastContainer,
+  },
+  methods: {
+    showToast(title, message, type = "success") {
+      this.$refs.toastRef.addToast(title, message, type);
+    },
+  },
+  provide() {
+    return {
+      showToast: this.showToast,
+    };
+  },
 };
 </script>
 

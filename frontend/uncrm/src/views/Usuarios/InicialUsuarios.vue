@@ -132,6 +132,7 @@ import usuarioService from "@/services/usuarioService";
 
 export default {
   name: "InicialUsuarios",
+  inject: ['showToast'],
   components: {
     Breadcrumbs,
     BotaoBase,
@@ -176,8 +177,8 @@ export default {
                 this.usuario.senha = "";
               })
               .catch((error) => {
-                console.error("Erro ao obter usuario:", error);
-                // this.$toast.error("Erro ao carregar usuario para edição");
+                console.error(error);
+                this.showToast("Erro", "Erro ao carregar usuário para edição", "error");
               });
           },
           disabled: (usuario) => usuario.statusItem === "Inativo",
@@ -214,15 +215,17 @@ export default {
       try {
         if (this.modoCadastro) {
           await usuarioService.cadastrar(this.usuario);
+          this.showToast("Sucesso!", "Usuário cadastrado com sucesso.", "success");
         } else {
           await usuarioService.atualizar(this.usuario);
+          this.showToast("Sucesso!", "Usuário editado com sucesso.", "success");
         }
         this.modalVisivel = false;
         this.usuario = new Usuario();
         this.usuarios = await carregarTodosUsuarios();
       } catch (error) {
-        console.error("Erro ao salvar usuário:", error);
-        this.$toast.error("Erro ao salvar usuário.");
+        console.error(error);
+        this.showToast("Erro", "Não foi possível salvar o usuário.", "error");
       } finally {
         this.isLoading = false;
       }
@@ -241,8 +244,10 @@ export default {
       try {
         await usuarioService.inativar(usuario);
         this.usuarios = await carregarTodosUsuarios();
+        this.showToast("Sucesso!", "Usuário inativado com sucesso.", "success");
       } catch (error) {
         console.error(error);
+        this.showToast("Erro", "Não foi possível inativar o usuário.", "error");
       }
       this.isLoading = false;
     },

@@ -18,6 +18,13 @@ export const icons = {
     usuarioGenerico: 'mdi-account',
     registrarParecer: 'mdi-send-variant-outline',
     status: 'mdi-progress-helper',
-    reabrir: 'mdi-restore',
-    codigoAtendimento: 'mdi-information-slab-circle-outline'
-}
+    codigoAtendimento: 'mdi-information-slab-circle-outline',
+    reabrir: 'mdi-restore'
+};
+
+export const toastIcons = {
+  success: 'mdi-check-circle-outline',
+  error: 'mdi-alert-circle-outline',
+  warning: 'mdi-alert-outline',
+  info: 'mdi-information-outline',
+};

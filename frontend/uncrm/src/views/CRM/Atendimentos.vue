@@ -296,6 +296,7 @@ import Atendimento from "@/models/Atendimento";
 
 export default {
   name: "CRMAtendimentos",
+  inject: ["showToast"],
   components: {
     TabelaGeral,
     Breadcrumbs,
@@ -365,7 +366,7 @@ export default {
           disabled: (atendimento) => atendimento.status === 0,
           handler: async (atendimento) => {
             if (!this.isGerente) {
-              alert("Apenas gerentes podem reabrir atendimentos.");
+              this.showToast("Acesso negado", "Apenas gerentes podem reabrir atendimentos", "warning");
               return;
             }
 
@@ -373,8 +374,10 @@ export default {
             try {
               await atendimentoService.reabrir(atendimento.id);
               await this.carregarAtendimentos();
+              this.showToast("Sucesso!", "O atendimento foi reaberto", "success");
             } catch (error) {
               console.error("Erro ao reabrir atendimento:", error);
+              this.showToast("Erro", "Não foi possível reabrir o atendimento", "error");
             } finally {
               this.isLoading = false;
             }
@@ -394,7 +397,6 @@ export default {
   },
   async mounted() {
     const usuario = storage.obterCargoNaStorage();
-    console.log(usuario);
     this.isGerente = usuario.isGerente;
       this.carregarAtendimentos();
       this.usuarios = await carregarTodosUsuariosAtivos();
@@ -410,6 +412,7 @@ export default {
         this.atendimentos = resultado.map((a) => new Atendimento(a));
       } catch (erro) {
         console.error("Erro ao carregar atendimentos:", erro);
+        this.showToast("Erro", "Falha ao carregar atendimentos.", "error");
       }
     },
     async filtrarAtendimentos(){
@@ -456,14 +459,17 @@ export default {
 
         if (this.modoCadastro) {
           await atendimentoService.criar(this.atendimento, usuarioLogadoId);
+          this.showToast("Sucesso!", "Atendimento criado", "success");
         } else {
           await atendimentoService.atualizar(this.atendimento);
+          this.showToast("Sucesso!", "Atendimento editado", "success");
         }
         this.modalVisivel = false;
         this.atendimento = new Atendimento();
         await this.carregarAtendimentos();
       } catch (error) {
         console.error("Erro ao salvar atendimento:", error);
+        this.showToast("Erro", "Não foi possível salvar o atendimento", "error");
       } finally {
         this.isLoading = false;
       }
