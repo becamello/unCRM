@@ -76,8 +76,8 @@
           <v-list nav>
             <v-list-item>
               <v-list-item-content>
-                <v-list-item-title class="titulo-filtro"
-                  >Filtro</v-list-item-title
+                <v-list-item-title class="d-flex justify-center titulo-filtro"
+                  >Filtros de atendimentos</v-list-item-title
                 >
               </v-list-item-content>
             </v-list-item>
@@ -87,60 +87,61 @@
             <v-list-item-content>
               <v-form>
                 <div class="d-flex align-center mb-5">
-                  <p class="mb-0 mr-1">Cadastro</p>
-                  <v-divider />
-                </div>
-                <DataPicker
-                  dense
-                  label="Data inicial"
-                  v-model="filtro.dataInicialCadastro"
-                />
-                <DataPicker
-                  dense
-                  label="Data final"
-                  v-model="filtro.dataFinalCadastro"
-                />
-                <v-autocomplete
-                  dense
-                  outlined
-                  deletable-chips
-                  multiple
-                  small-chips
-                  v-model="filtro.usuarioCriadorId"
-                  :items="usuarios"
-                  item-value="id"
-                  item-text="login"
-                  label="Usuário"
-                  color="secondary"
-                  item-color="secondary"
-                />
-                <div class="d-flex align-center mb-5">
                   <p class="mb-0 mr-1">Próximo contato</p>
                   <v-divider />
                 </div>
                 <DataPicker
-                  dense
                   label="Data inicial"
                   v-model="filtro.dataInicialProximoContato"
+                  :max="filtro.dataFinalProximoContato || null"
+                  dense
                 />
                 <DataPicker
-                  dense
                   label="Data final"
                   v-model="filtro.dataFinalProximoContato"
-                />
-                <v-autocomplete
+                  :min="filtro.dataInicialProximoContato || null"
                   dense
-                  outlined
-                  deletable-chips
-                  multiple
-                  small-chips
+                />
+                <AutocompleteBase
                   v-model="filtro.usuarioProximoContatoId"
                   :items="usuarios"
+                  label="Usuário"
                   item-value="id"
                   item-text="login"
+                />
+                <div class="d-flex align-center mb-5">
+                  <p class="mb-0 mr-1">Cadastro</p>
+                  <v-divider />
+                </div>
+                <DataPicker
+                  label="Data inicial"
+                  v-model="filtro.dataInicialCadastro"
+                  :max="filtro.dataFinalCadastro || null"
+                  dense
+                />
+                <DataPicker
+                  label="Data final"
+                  v-model="filtro.dataFinalCadastro"
+                  :min="filtro.dataInicialCadastro || null"
+                  dense
+                />
+                <AutocompleteBase
+                  v-model="filtro.usuarioCriadorId"
+                  :items="usuarios"
                   label="Usuário"
-                  color="secondary"
-                  item-color="secondary"
+                  item-value="id"
+                  item-text="login"
+                />
+                <div class="d-flex align-center mb-5">
+                  <p class="mb-0 mr-1">Pessoa</p>
+                  <v-divider />
+                </div>
+                <AutocompleteBase
+                  v-model="filtro.pessoaId"
+                  :items="pessoas"
+                  label="Pessoas"
+                  item-value="id"
+                  item-text="nome"
                 />
               </v-form>
             </v-list-item-content>
@@ -283,6 +284,7 @@ import Breadcrumbs from "@/components/Breadcrumbs.vue";
 import BotaoBase from "@/components/Base/BotaoBase.vue";
 import DataPicker from "@/components/Base/DataPicker.vue";
 import ModalFormulario from "@/components/Base/ModalFormulario.vue";
+import AutocompleteBase from "@/components/Base/AutocompleteBase.vue";
 
 import { icons } from "@/constants/icons";
 
@@ -303,6 +305,7 @@ export default {
     BotaoBase,
     DataPicker,
     ModalFormulario,
+    AutocompleteBase,
   },
   data() {
     return {
@@ -398,11 +401,11 @@ export default {
   async mounted() {
     const usuario = storage.obterCargoNaStorage();
     this.isGerente = usuario.isGerente;
-      this.carregarAtendimentos();
-      this.usuarios = await carregarTodosUsuariosAtivos();
-      this.tipoAtendimentos = await carregarTodosTiposAgendamento();
-      this.pessoas = await carregarTodasPessoasAtivas();
-      this.isLoading = false;
+    this.carregarAtendimentos();
+    this.usuarios = await carregarTodosUsuariosAtivos();
+    this.tipoAtendimentos = await carregarTodosTiposAgendamento();
+    this.pessoas = await carregarTodasPessoasAtivas();
+    this.isLoading = false;
   },
 
   methods: {
@@ -415,7 +418,7 @@ export default {
         this.showToast("Erro", "Falha ao carregar atendimentos.", "error");
       }
     },
-    async filtrarAtendimentos(){
+    async filtrarAtendimentos() {
       this.isLoading = true;
       await this.carregarAtendimentos();
       this.isLoading = false;
@@ -469,7 +472,11 @@ export default {
         await this.carregarAtendimentos();
       } catch (error) {
         console.error("Erro ao salvar atendimento:", error);
-        this.showToast("Erro", "Não foi possível salvar o atendimento", "error");
+        this.showToast(
+          "Erro",
+          "Não foi possível salvar o atendimento",
+          "error"
+        );
       } finally {
         this.isLoading = false;
       }
@@ -481,7 +488,7 @@ export default {
       });
     },
     limparFiltro() {
-    this.filtro = {
+      this.filtro = {
         pessoaId: [],
         usuarioCriadorId: [],
         dataInicialCadastro: "",
@@ -489,8 +496,8 @@ export default {
         usuarioProximoContatoId: [],
         dataInicialProximoContato: "",
         dataFinalProximoContato: "",
-      }
-    }
+      };
+    },
   },
 };
 </script>

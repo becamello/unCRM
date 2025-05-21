@@ -27,6 +27,9 @@
       no-title
       :show-current="false"
       color="var(--text-primary)"
+      :min="min"
+      :max="max"
+      :allowed-dates="allowedDates"
       @input="onSelectDate"
     />
   </v-menu>
@@ -39,7 +42,10 @@ export default {
     value: String,
     label: { type: String, default: "Data" },
     rules: { type: Array, default: () => [] },
-    dense: { type: Boolean, default: false }, 
+    dense: { type: Boolean, default: false },
+    min: String,
+    max: String,
+    allowedDates: Function,
   },
   data() {
     return {
