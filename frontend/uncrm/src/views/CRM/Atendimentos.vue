@@ -87,38 +87,26 @@
             <v-list-item-content>
               <v-form>
                 <div class="d-flex align-center mb-5">
-                  <p class="mb-0 mr-1">Próximo contato</p>
-                  <v-divider />
-                </div>
-                <DataPicker dense label="Data inicial" />
-                <DataPicker dense label="Data final" />
-                <v-autocomplete
-                  dense
-                  outlined
-                  deletable-chips
-                  multiple
-                  small-chips
-                  v-model="filtro.usuarios"
-                  :items="usuarios"
-                  item-value="id"
-                  item-text="login"
-                  label="Usuário"
-                  color="secondary"
-                  item-color="secondary"
-                />
-                <div class="d-flex align-center mb-5">
                   <p class="mb-0 mr-1">Cadastro</p>
                   <v-divider />
                 </div>
-                <DataPicker dense label="Data inicial" />
-                <DataPicker dense label="Data final" />
+                <DataPicker
+                  dense
+                  label="Data inicial"
+                  v-model="filtro.dataInicialCadastro"
+                />
+                <DataPicker
+                  dense
+                  label="Data final"
+                  v-model="filtro.dataFinalCadastro"
+                />
                 <v-autocomplete
                   dense
                   outlined
                   deletable-chips
                   multiple
                   small-chips
-                  v-model="filtro.usuarios"
+                  v-model="filtro.usuarioCriadorId"
                   :items="usuarios"
                   item-value="id"
                   item-text="login"
@@ -127,18 +115,26 @@
                   item-color="secondary"
                 />
                 <div class="d-flex align-center mb-5">
-                  <p class="mb-0 mr-1">Parecer</p>
+                  <p class="mb-0 mr-1">Próximo contato</p>
                   <v-divider />
                 </div>
-                <DataPicker dense label="Data inicial" />
-                <DataPicker dense label="Data final" />
+                <DataPicker
+                  dense
+                  label="Data inicial"
+                  v-model="filtro.dataInicialProximoContato"
+                />
+                <DataPicker
+                  dense
+                  label="Data final"
+                  v-model="filtro.dataFinalProximoContato"
+                />
                 <v-autocomplete
                   dense
                   outlined
                   deletable-chips
                   multiple
                   small-chips
-                  v-model="filtro.usuarios"
+                  v-model="filtro.usuarioProximoContatoId"
                   :items="usuarios"
                   item-value="id"
                   item-text="login"
@@ -146,7 +142,6 @@
                   color="secondary"
                   item-color="secondary"
                 />
-                <v-divider />
               </v-form>
             </v-list-item-content>
           </v-list-item>
@@ -156,12 +151,18 @@
               <v-list-item-content>
                 <v-row>
                   <v-col cols="6" class="d-flex justify-center">
-                    <BotaoBase variante="secundario" width="100%"
+                    <BotaoBase
+                      variante="secundario"
+                      width="100%"
+                      @click="limparFiltro"
                       >Limpar</BotaoBase
                     >
                   </v-col>
                   <v-col cols="6" class="d-flex justify-center">
-                    <BotaoBase variante="primario" width="100%"
+                    <BotaoBase
+                      variante="primario"
+                      width="100%"
+                      @click="filtrarAtendimentos"
                       >Filtrar</BotaoBase
                     >
                   </v-col>
@@ -381,30 +382,41 @@ export default {
         },
       ],
       filtro: {
-        usuarios: [],
+        pessoaId: [],
+        usuarioCriadorId: [],
+        dataInicialCadastro: "",
+        dataFinalCadastro: "",
+        usuarioProximoContatoId: [],
+        dataInicialProximoContato: "",
+        dataFinalProximoContato: "",
       },
     };
   },
   async mounted() {
-    const usuario = storage.obterStorage();
+    const usuario = storage.obterCargoNaStorage();
+    console.log(usuario);
     this.isGerente = usuario.isGerente;
-
-    Promise.all([
-      this.carregarAtendimentos(),
-      (this.usuarios = await carregarTodosUsuariosAtivos()),
-      (this.tipoAtendimentos = await carregarTodosTiposAgendamento()),
-      (this.pessoas = await carregarTodasPessoasAtivas()),
-    ]).finally(() => (this.isLoading = false));
+      this.carregarAtendimentos();
+      this.usuarios = await carregarTodosUsuariosAtivos();
+      this.tipoAtendimentos = await carregarTodosTiposAgendamento();
+      this.pessoas = await carregarTodasPessoasAtivas();
+      this.isLoading = false;
   },
 
   methods: {
     async carregarAtendimentos() {
       try {
-        const resultado = await atendimentoService.obterTodos();
+        const resultado = await atendimentoService.obterTodos(this.filtro);
         this.atendimentos = resultado.map((a) => new Atendimento(a));
       } catch (erro) {
         console.error("Erro ao carregar atendimentos:", erro);
       }
+    },
+    async filtrarAtendimentos(){
+      this.isLoading = true;
+      await this.carregarAtendimentos();
+      this.isLoading = false;
+      this.drawer = false;
     },
     getNomeUsuario(id) {
       const usuario = this.usuarios.find((u) => u.id === id);
@@ -462,6 +474,17 @@ export default {
         params: { id: atendimento.id },
       });
     },
+    limparFiltro() {
+    this.filtro = {
+        pessoaId: [],
+        usuarioCriadorId: [],
+        dataInicialCadastro: "",
+        dataFinalCadastro: "",
+        usuarioProximoContatoId: [],
+        dataInicialProximoContato: "",
+        dataFinalProximoContato: "",
+      }
+    }
   },
 };
 </script>

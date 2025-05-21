@@ -18,10 +18,12 @@ namespace UnCRM.Api.Domain.Models
         public void Encerrar()
         {
             Status = StatusAtendimentoEnum.Encerrado;
+            DataInativacao = DateTime.Now;
         }
         public void Reabrir()
         {
             Status = StatusAtendimentoEnum.Aberto;
+            DataInativacao = null;
         }
         public Parecer RegistrarParecer(long usuario, string descricao)
         {

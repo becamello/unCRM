@@ -50,11 +50,18 @@ namespace UnCRM.Api.Domain.Services.Classes
             };
         }
 
-        public async Task<IEnumerable<AtendimentoQueryResponseContract>> ObterTodos()
+        public async Task<IEnumerable<AtendimentoQueryResponseContract>> ObterTodos(AtendimentoQueryRequestContract filtro)
         {
             var atendimentos = await repository.Query()
                 .Include(x => x.Pessoa)
                 .Include(x => x.TipoAtendimento)
+                .Where(x => !filtro.DataInicialCadastro.HasValue || x.DataCadastro.Date >= filtro.DataInicialCadastro.Value.Date)
+                .Where(x => !filtro.DataFinalCadastro.HasValue || x.DataCadastro.Date <= filtro.DataFinalCadastro.Value.Date)
+                .Where(x => !filtro.DataInicialProximoContato.HasValue || x.ProximoContato.Data.Date >= filtro.DataInicialProximoContato.Value.Date)
+                .Where(x => !filtro.DataFinalProximoContato.HasValue || x.ProximoContato.Data.Date <= filtro.DataFinalProximoContato.Value.Date)
+                .Where(x => filtro.UsuarioProximoContatoId.Count == 0 || filtro.UsuarioProximoContatoId.Contains(x.ProximoContato.Usuario))
+                .Where(x => filtro.UsuarioCriadorId.Count == 0 || filtro.UsuarioCriadorId.Contains(x.UsuarioCriacaoId))
+                .Where(x => filtro.PessoaId.Count == 0 || filtro.PessoaId.Contains(x.PessoaId))
                 .AsNoTracking()
                 .ToListAsync();
 

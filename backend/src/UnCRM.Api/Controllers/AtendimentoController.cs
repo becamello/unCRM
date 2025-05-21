@@ -30,9 +30,9 @@ namespace UnCRM.Api.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> ObterTodos()
+        public async Task<IActionResult> ObterTodos([FromQuery] AtendimentoQueryRequestContract filtro)
         {
-            return Ok(await _service.ObterTodos());
+            return Ok(await _service.ObterTodos(filtro));
         }
 
         [HttpGet("{id}")]
