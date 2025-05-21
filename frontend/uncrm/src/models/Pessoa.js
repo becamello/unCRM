@@ -39,4 +39,8 @@ export default class Pessoa {
       ? new Date(this.dataCadastro).toLocaleDateString("pt-BR")
       : "-";
   }
+
+  get idFormatado() {
+    return this.id.toString().padStart(6, '0') ?? " ";
+  }
 }

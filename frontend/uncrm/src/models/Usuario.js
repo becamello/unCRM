@@ -42,4 +42,8 @@ export default class Usuario {
   get statusItem() {
     return this.dataInativacao ? "Inativo" : "Ativo";
   }
+
+  get idFormatado() {
+    return this.id.toString().padStart(6, '0') ?? " ";
+  }
 }
