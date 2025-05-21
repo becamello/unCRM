@@ -241,9 +241,10 @@
               <v-row>
                 <v-col cols="12" md="6" sm="6" class="pa-0 px-2">
                   <DataPicker
-                    v-model="atendimento.proximoContato.data"
+                    v-model="tempProximoContatoData"
                     label="Data próximo contato"
                     required
+                    :min="hoje"
                     :rules="[
                       (v) =>
                         (v !== undefined && v !== null) ||
@@ -253,7 +254,7 @@
                 </v-col>
                 <v-col cols="12" md="6" sm="6" class="pa-0 px-2">
                   <v-autocomplete
-                    v-model="atendimento.proximoContato.usuario"
+                    v-model="tempProximoContatoUsuario"
                     outlined
                     required
                     :items="usuarios"
@@ -317,6 +318,9 @@ export default {
       isGerente: false,
       drawer: false,
       isLoading: true,
+      hoje: new Date().toISOString().split("T")[0],
+      tempProximoContatoData: null,
+      tempProximoContatoUsuario: null,
       usuarios: [],
       tipoAtendimentos: [],
       pessoas: [],
@@ -348,6 +352,8 @@ export default {
               .then((response) => {
                 this.atendimento = new Atendimento(response.data);
                 this.modoCadastro = false;
+                this.tempProximoContatoData = null;
+                this.tempProximoContatoUsuario = null;
                 this.tituloModal = "Editar atendimento";
                 this.modalVisivel = true;
               })
@@ -369,7 +375,11 @@ export default {
           disabled: (atendimento) => atendimento.status === 0,
           handler: async (atendimento) => {
             if (!this.isGerente) {
-              this.showToast("Acesso negado", "Apenas gerentes podem reabrir atendimentos", "warning");
+              this.showToast(
+                "Acesso negado",
+                "Apenas gerentes podem reabrir atendimentos",
+                "warning"
+              );
               return;
             }
 
@@ -377,10 +387,18 @@ export default {
             try {
               await atendimentoService.reabrir(atendimento.id);
               await this.carregarAtendimentos();
-              this.showToast("Sucesso!", "O atendimento foi reaberto", "success");
+              this.showToast(
+                "Sucesso!",
+                "O atendimento foi reaberto",
+                "success"
+              );
             } catch (error) {
               console.error("Erro ao reabrir atendimento:", error);
-              this.showToast("Erro", "Não foi possível reabrir o atendimento", "error");
+              this.showToast(
+                "Erro",
+                "Não foi possível reabrir o atendimento",
+                "error"
+              );
             } finally {
               this.isLoading = false;
             }
@@ -456,6 +474,11 @@ export default {
       const isValid = this.$refs.form.validate();
       if (!isValid) return;
 
+      this.atendimento.proximoContato = {
+        data: this.tempProximoContatoData,
+        usuario: this.tempProximoContatoUsuario,
+      };
+
       this.isLoading = true;
       try {
         let usuarioLogadoId = storage.obterUsuarioIdDoToken();
@@ -467,6 +490,7 @@ export default {
           await atendimentoService.atualizar(this.atendimento);
           this.showToast("Sucesso!", "Atendimento editado", "success");
         }
+
         this.modalVisivel = false;
         this.atendimento = new Atendimento();
         await this.carregarAtendimentos();

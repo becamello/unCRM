@@ -135,6 +135,7 @@
               v-model="tempProximoContatoData"
               label="Data próximo contato"
               required
+              :min="hoje"
             />
             <v-autocomplete
               v-model="tempProximoContatoUsuario"
@@ -197,6 +198,7 @@ export default {
       estaEditandoParecer: false,
       tempProximoContatoData: null,
       tempProximoContatoUsuario: null,
+      hoje: new Date().toISOString().split("T")[0],
     };
   },
   async mounted() {
