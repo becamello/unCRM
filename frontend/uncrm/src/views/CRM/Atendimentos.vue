@@ -309,6 +309,9 @@ export default {
       atendimento: new Atendimento(),
       modoCadastro: true,
       tituloModal: "",
+      isGerente: false,
+      drawer: false,
+      isLoading: true,
       usuarios: [],
       tipoAtendimentos: [],
       pessoas: [],
@@ -355,15 +358,37 @@ export default {
           //     console.log("Excluir", item);
           //   },
         },
+        {
+          label: "Reabrir atendimento",
+          icon: icons.reabrir,
+          disabled: (atendimento) => atendimento.status === 0,
+          handler: async (atendimento) => {
+            if (!this.isGerente) {
+              alert("Apenas gerentes podem reabrir atendimentos.");
+              return;
+            }
+
+            this.isLoading = true;
+            try {
+              await atendimentoService.reabrir(atendimento.id);
+              await this.carregarAtendimentos();
+            } catch (error) {
+              console.error("Erro ao reabrir atendimento:", error);
+            } finally {
+              this.isLoading = false;
+            }
+          },
+        },
       ],
-      drawer: false,
-      isLoading: true,
       filtro: {
         usuarios: [],
       },
     };
   },
   async mounted() {
+    const usuario = storage.obterStorage();
+    this.isGerente = usuario.isGerente;
+
     Promise.all([
       this.carregarAtendimentos(),
       (this.usuarios = await carregarTodosUsuariosAtivos()),
@@ -371,6 +396,7 @@ export default {
       (this.pessoas = await carregarTodasPessoasAtivas()),
     ]).finally(() => (this.isLoading = false));
   },
+
   methods: {
     async carregarAtendimentos() {
       try {

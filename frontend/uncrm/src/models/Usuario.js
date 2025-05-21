@@ -13,14 +13,18 @@ export default class Usuario {
   static cargoMap = {
     0: "Gerente",
     1: "Supervisor",
-    2: "Atendente"
+    2: "Atendente",
   };
 
   get cargoDescricao() {
     return Usuario.cargoMap[this.cargo] || "Desconhecido";
   }
+  
+  get isGerente() {
+    return this.cargo === 0;
+  }
 
-    get dataCadastroFormatada() {
+  get dataCadastroFormatada() {
     return this.dataCadastro
       ? new Date(this.dataCadastro).toLocaleDateString("pt-BR")
       : "-";

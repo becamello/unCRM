@@ -59,10 +59,10 @@ function editarParecer(atendimentoId, parecerId, request) {
   });
 }
 
-function reabrir(id, usuarioLogadoId) {
+function reabrir(id) {
   return new Promise((resolve, reject) => {
     api
-      .put(`/atendimento/${id}/reabrir?usuarioLogadoId=${usuarioLogadoId}`)
+      .put(`/atendimento/${id}/reabrir`)
       .then((response) => resolve(response.data))
       .catch((error) => reject(error));
   });
