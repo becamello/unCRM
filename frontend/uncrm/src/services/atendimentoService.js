@@ -50,10 +50,10 @@ function atualizar(atendimento) {
   });
 }
 
-function editarParecer(atendimentoId, parecerId, request, usuarioLogadoId) {
+function editarParecer(atendimentoId, parecerId, request) {
   return new Promise((resolve, reject) => {
     api
-      .put(`/atendimento/${atendimentoId}/parecer/${parecerId}?usuarioLogadoId=${usuarioLogadoId}`, request)
+      .put(`/atendimento/${atendimentoId}/parecer/${parecerId}`, request)
       .then((response) => resolve(new Parecer(response.data)))
       .catch((error) => reject(error));
   });

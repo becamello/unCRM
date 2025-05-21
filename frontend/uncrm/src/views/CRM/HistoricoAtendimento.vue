@@ -21,58 +21,28 @@
             </v-col>
           </v-row>
           <v-row class="mb-1">
-            <v-col cols="12" md="3" class="py-0">
-              <IconLabel :icon="icons.codigoAtendimento" label="Código">
-                {{ atendimento.idFormatado }}
-              </IconLabel>
-              <IconLabel :icon="icons.pessoa" label="Pessoa">
-                {{ atendimento.pessoaNome }}
-              </IconLabel>
-            </v-col>
-
-            <v-col cols="12" md="3" class="py-0">
-              <IconLabel :icon="icons.tipoAtendimento" label="Tipo atendimento">
-                {{ atendimento.tipoAtendimentoDescricao }}
-              </IconLabel>
-              <IconLabel :icon="icons.status" label="Status">
-                <div class="status-wrapper">
+            <v-col
+              cols="12"
+              md="3"
+              class="py-0"
+              v-for="(info, index) in infosPrincipais()"
+              :key="index"
+            >
+              <IconLabel :icon="icons[info.icon]" :label="info.label">
+                <template v-if="info.isStatus">
                   <v-chip
-                    :color="statusChipColor(atendimento.statusItem)"
+                    :color="statusChipColor(info.valor)"
                     dark
                     x-small
                     outlined
                     class="chip-status"
                   >
-                    {{ atendimento.statusItem }}
+                    {{ info.valor }}
                   </v-chip>
-                </div>
-              </IconLabel>
-            </v-col>
-
-            <v-col cols="12" md="3" class="py-0">
-              <IconLabel
-                :icon="icons.usuarioGenerico"
-                label="Usuário de abertura"
-              >
-                {{ atendimento.usuarioCriadorLogin }}
-              </IconLabel>
-              <IconLabel :icon="icons.dataGenerico" label="Data cadastro">
-                {{ atendimento.dataCadastroFormatada }}
-              </IconLabel>
-            </v-col>
-
-            <v-col cols="12" md="3" class="py-0">
-              <IconLabel
-                :icon="icons.usuarioGenerico"
-                label="Usuário próximo contato"
-              >
-                {{ atendimento.proximoContato.usuarioLogin }}
-              </IconLabel>
-              <IconLabel
-                :icon="icons.dataGenerico"
-                label="Data próximo contato"
-              >
-                {{ atendimento.proximoContato.dataFormatada }}
+                </template>
+                <template v-else>
+                  {{ info.valor }}
+                </template>
               </IconLabel>
             </v-col>
           </v-row>
@@ -86,8 +56,9 @@
               :key="parecer.id"
               :parecer="parecer"
               :icons="icons"
-              :usuario-logado-id="usuarioLogadoId"
+              :usuario-logado-id="Number(usuarioLogadoId)"
               :atendimento-encerrado="atendimentoEncerrado"
+              @editar="abrirEdicaoParecer"
             />
           </div>
         </v-col>
@@ -133,47 +104,65 @@
       <ModalFormulario
         v-model="modalVisivel"
         @cancelar="cancelar"
-        @salvar="confirmarAcaoParecer"
+        @salvar="aoSalvarParecer"
         :titulo-modal="tituloModal"
         width="50%"
       >
         <v-overlay v-if="isSubmitting" absolute>
           <v-progress-circular indeterminate color="primary" size="30" />
         </v-overlay>
-        <v-form ref="formModal" lazy-validation>
-          <v-radio-group v-model="parecerAcao" class="mb-4">
-            <v-radio label="Encerrar atendimento" value="encerrar"></v-radio>
-            <v-radio label="Definir próximo contato" value="proximo"></v-radio>
-          </v-radio-group>
 
-          <div v-if="parecerAcao === 'proximo'">
-            <DataPicker
-              v-model="atendimento.proximoContato.data"
-              label="Data próximo contato"
-              required
-              :rules="[
-                (v) =>
-                  (v !== undefined && v !== null) ||
-                  'A data de próximo contato é obrigatória',
-              ]"
-            />
-            <v-autocomplete
-              v-model="atendimento.proximoContato.usuario"
+        <v-form ref="formModal" lazy-validation>
+          <template v-if="estaEditandoParecer">
+            <v-textarea
+              v-model="parecerEditando.descricao"
+              label="Descrição do parecer"
               outlined
+              rows="5"
+              clearable
               required
-              :items="usuarios"
-              item-value="id"
-              item-text="login"
-              label="Usuário próximo contato"
-              color="secondary"
-              item-color="secondary"
-              :rules="[
-                (v) =>
-                  (v !== undefined && v !== null) ||
-                  'O usuário de próximo contato é obrigatório',
-              ]"
+              :rules="[(v) => !!v || 'Descrição obrigatória']"
             />
-          </div>
+          </template>
+
+          <template v-else>
+            <v-radio-group v-model="parecerAcao" class="mb-4">
+              <v-radio label="Encerrar atendimento" value="encerrar"></v-radio>
+              <v-radio
+                label="Definir próximo contato"
+                value="proximo"
+              ></v-radio>
+            </v-radio-group>
+
+            <div v-if="parecerAcao === 'proximo'">
+              <DataPicker
+                v-model="tempProximoContatoData"
+                label="Data próximo contato"
+                required
+                :rules="[
+                  (v) =>
+                    (v !== undefined && v !== null) ||
+                    'A data de próximo contato é obrigatória',
+                ]"
+              />
+              <v-autocomplete
+                v-model="tempProximoContatoUsuario"
+                outlined
+                required
+                :items="usuarios"
+                item-value="id"
+                item-text="login"
+                label="Usuário próximo contato"
+                color="secondary"
+                item-color="secondary"
+                :rules="[
+                  (v) =>
+                    (v !== undefined && v !== null) ||
+                    'O usuário de próximo contato é obrigatório',
+                ]"
+              />
+            </div>
+          </template>
         </v-form>
       </ModalFormulario>
     </v-container>
@@ -218,6 +207,10 @@ export default {
       modalVisivel: false,
       usuarios: [],
       parecer: new Parecer(),
+      parecerEditando: null,
+      estaEditandoParecer: false,
+      tempProximoContatoData: null,
+      tempProximoContatoUsuario: null,
     };
   },
   async mounted() {
@@ -238,18 +231,73 @@ export default {
       const id = this.$route.params.id;
       try {
         const response = await atendimentoService.obterPorId(id);
-        this.atendimento = new Atendimento(response.data);
-        console.log(response.data);
-        console.log("Pareceres recebidos:", response.data.pareceres);
+        const atendimentoData = response.data;
+
+        atendimentoData.pareceres =
+          atendimentoData.pareceres?.map((p) => new Parecer(p)) ?? [];
+
+        this.atendimento = new Atendimento(atendimentoData);
       } catch (error) {
         console.error("Erro ao carregar atendimento:", error);
       }
     },
+    infosPrincipais() {
+      return [
+        {
+          icon: "codigoAtendimento",
+          label: "Código",
+          valor: this.atendimento?.idFormatado || "",
+        },
+        {
+          icon: "tipoAtendimento",
+          label: "Tipo atendimento",
+          valor: this.atendimento?.tipoAtendimentoDescricao || "",
+        },
+        {
+          icon: "usuarioGenerico",
+          label: "Usuário de abertura",
+          valor: this.atendimento?.usuarioCriadorLogin || "",
+        },
+        {
+          icon: "usuarioGenerico",
+          label: "Usuário próximo contato",
+          valor: this.atendimento?.proximoContato?.usuarioLogin || "",
+        },
+        {
+          icon: "pessoa",
+          label: "Pessoa",
+          valor: this.atendimento?.pessoaNome || "",
+        },
+        {
+          icon: "status",
+          label: "Status",
+          valor: this.atendimento?.statusItem || "",
+          isStatus: true,
+        },
+        {
+          icon: "dataGenerico",
+          label: "Data cadastro",
+          valor: this.atendimento?.dataCadastroFormatada || "",
+        },
+        {
+          icon: "dataGenerico",
+          label: "Data próximo contato",
+          valor: this.atendimento?.proximoContato?.dataFormatada || "",
+        },
+      ];
+    },
+    aoSalvarParecer() {
+      if (this.estaEditandoParecer) {
+        this.salvarEdicaoParecer();
+      } else {
+        this.confirmarAcaoParecer();
+      }
+    },
     abrirModal() {
       if (this.$refs.formParecer.validate()) {
+        this.tempProximoContatoData = null;
+        this.tempProximoContatoUsuario = null;
         this.modalVisivel = true;
-        this.atendimento.proximoContato.data = null;
-        this.atendimento.proximoContato.usuario = null;
       }
     },
     async confirmarAcaoParecer() {
@@ -269,20 +317,20 @@ export default {
         }
 
         if (this.parecerAcao === "proximo") {
-          if (
-            !this.atendimento.proximoContato?.usuario ||
-            !this.atendimento.proximoContato?.data
-          ) {
+          if (!this.tempProximoContatoUsuario || !this.tempProximoContatoData) {
             return;
           }
+          this.atendimento.proximoContato.usuario =
+            this.tempProximoContatoUsuario;
+          this.atendimento.proximoContato.data = this.tempProximoContatoData;
 
           await atendimentoService.registrarParecerComProximoContato(
             atendimentoId,
             {
               parecer: parecerDescricao,
               proximoContato: {
-                usuario: this.atendimento.proximoContato.usuario,
-                data: this.atendimento.proximoContato.data,
+                usuario: this.tempProximoContatoUsuario,
+                data: this.tempProximoContatoData,
               },
             }
           );
@@ -300,6 +348,8 @@ export default {
     cancelar() {
       this.modalVisivel = false;
       this.parecerAcao = null;
+      this.parecerEditando = null;
+      this.estaEditandoParecer = false;
     },
     statusChipColor(status) {
       const colorsStatus = {
@@ -308,14 +358,42 @@ export default {
       };
       return colorsStatus[status] || "grey";
     },
+    abrirEdicaoParecer(parecer) {
+      this.parecerEditando = { ...parecer };
+      this.estaEditandoParecer = true;
+      this.tituloModal = "Editar parecer";
+      this.modalVisivel = true;
+    },
+    async salvarEdicaoParecer() {
+      if (!this.parecerEditando.descricao) {
+        alert("Descrição obrigatória.");
+        return;
+      }
+
+      this.isSubmitting = true;
+      try {
+        await atendimentoService.editarParecer(
+          this.atendimento.id,
+          this.parecerEditando.id,
+          {
+            descricao: this.parecerEditando.descricao,
+          },
+          this.usuarioLogadoId
+        );
+
+        this.cancelar();
+        await this.carregarAtendimento();
+      } catch (e) {
+        console.error("Erro ao editar parecer:", e);
+      } finally {
+        this.isSubmitting = false;
+      }
+    },
   },
 };
 </script>
 
 <style scoped>
-.parecer {
-  background-color: var(--background-parecer);
-}
 .fill-height {
   height: 100vh;
 }
