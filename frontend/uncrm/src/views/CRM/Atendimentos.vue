@@ -228,6 +228,8 @@
                   <v-textarea
                     v-model="atendimento.parecer"
                     :rules="[(v) => !!v || 'O parecer é obrigatório']"
+                    counter="500"
+                    maxlength="500"
                     label="Descrição do parecer"
                     required
                     outlined

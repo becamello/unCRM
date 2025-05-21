@@ -60,6 +60,8 @@
                     <v-text-field
                       v-model="usuario.login"
                       :rules="[(v) => !!v || 'O login é obrigatório']"
+                      counter="20"
+                      maxlength="20"
                       label="Login"
                       required
                       outlined
@@ -75,6 +77,8 @@
                       @click:append="show = !show"
                       label="Senha"
                       :rules="[(v) => !!v || 'A senha é obrigatória']"
+                      counter="20"
+                      maxlength="20"
                       color="secondary"
                     ></v-text-field>
                   </v-col>
@@ -85,6 +89,8 @@
                       v-model="usuario.nome"
                       :rules="[(v) => !!v || 'O nome é obrigatório']"
                       label="Nome completo"
+                      counter="50"
+                      maxlength="50"
                       required
                       outlined
                       color="secondary"
@@ -132,7 +138,7 @@ import usuarioService from "@/services/usuarioService";
 
 export default {
   name: "InicialUsuarios",
-  inject: ['showToast'],
+  inject: ["showToast"],
   components: {
     Breadcrumbs,
     BotaoBase,
@@ -153,10 +159,10 @@ export default {
         { id: 2, nome: "Atendente" },
       ],
       headers: [
-        { text: "Código", value: "id", width: "8%" },
+        { text: "Código", value: "idFormatado", width: "8%" },
         { text: "Login", value: "login", width: "18%" },
-        { text: "Nome", value: "nome", width: "32%" },
-        { text: "Cargo", value: "cargoDescricao", width: "18%" },
+        { text: "Nome", value: "nome", width: "40%" },
+        { text: "Cargo", value: "cargoDescricao", width: "10%" },
         { text: "Data cadastro", value: "dataCadastroFormatada", width: "12%" },
         { text: "Status", value: "statusItem", align: "center", width: "12%" },
         { text: "Ações", value: "acoes", sortable: false },
@@ -178,7 +184,11 @@ export default {
               })
               .catch((error) => {
                 console.error(error);
-                this.showToast("Erro", "Erro ao carregar usuário para edição", "error");
+                this.showToast(
+                  "Erro",
+                  "Erro ao carregar usuário para edição",
+                  "error"
+                );
               });
           },
           disabled: (usuario) => usuario.statusItem === "Inativo",
@@ -215,7 +225,11 @@ export default {
       try {
         if (this.modoCadastro) {
           await usuarioService.cadastrar(this.usuario);
-          this.showToast("Sucesso!", "Usuário cadastrado com sucesso.", "success");
+          this.showToast(
+            "Sucesso!",
+            "Usuário cadastrado com sucesso.",
+            "success"
+          );
         } else {
           await usuarioService.atualizar(this.usuario);
           this.showToast("Sucesso!", "Usuário editado com sucesso.", "success");

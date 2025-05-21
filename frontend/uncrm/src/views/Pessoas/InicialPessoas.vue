@@ -61,6 +61,8 @@
                       v-model="pessoa.nome"
                       :rules="[(v) => !!v || 'O nome é obrigatório']"
                       label="Nome"
+                      counter="50"
+                      maxlength="50"
                       required
                       outlined
                       color="secondary"
@@ -73,6 +75,8 @@
                       @click:append="show = !show"
                       label="Nome curto"
                       :rules="[(v) => !!v || 'O nome curto é obrigatório']"
+                      counter="30"
+                      maxlength="30"
                       color="secondary"
                     ></v-text-field>
                   </v-col>
@@ -82,6 +86,8 @@
                     <v-text-field
                       v-model="pessoa.cpfCnpj"
                       :rules="[(v) => !!v || 'O CPF/CNPJ é obrigatório']"
+                      counter="14"
+                      maxlength="14"
                       label="CPF/CNPJ"
                       required
                       outlined
@@ -130,7 +136,7 @@ import pessoaService from "@/services/pessoaService";
 
 export default {
   name: "InicialPessoas",
-  inject: ['showToast'],
+  inject: ["showToast"],
   components: {
     Breadcrumbs,
     BotaoBase,
@@ -150,7 +156,7 @@ export default {
         { id: 1, nome: "Pessoa jurídica" },
       ],
       headers: [
-        { text: "Código", value: "id", width: "8%" },
+        { text: "Código", value: "idFormatado", width: "8%" },
         { text: "Nome", value: "nome", width: "32%" },
         { text: "Nome curto", value: "nomeCurto", width: "18%" },
         { text: "CPF/CNPJ", value: "cpfCnpjFormatado", width: "18%" },
@@ -176,7 +182,11 @@ export default {
               })
               .catch((error) => {
                 console.error("Erro ao obter pessoa:", error);
-                this.showToast("Erro", "Erro ao carregar usuário para edição", "error");
+                this.showToast(
+                  "Erro",
+                  "Erro ao carregar usuário para edição",
+                  "error"
+                );
               });
           },
           disabled: (pessoa) => pessoa.statusItem === "Inativo",
@@ -213,7 +223,11 @@ export default {
       try {
         if (this.modoCadastro) {
           await pessoaService.cadastrar(this.pessoa);
-          this.showToast("Sucesso!", "Pessoa cadastrada com sucesso.", "success");
+          this.showToast(
+            "Sucesso!",
+            "Pessoa cadastrada com sucesso.",
+            "success"
+          );
         } else {
           await pessoaService.atualizar(this.pessoa);
           this.showToast("Sucesso!", "Pessoa editada com sucesso.", "success");

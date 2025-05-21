@@ -69,12 +69,14 @@
             <v-textarea
               v-model="parecer.parecer"
               :rules="[(v) => !!v || 'O parecer é obrigatório']"
+              counter="500"
+              maxlength="500"
               :disabled="atendimentoEncerrado"
               label="Descrição do parecer"
               required
               outlined
               clearable
-              rows="3"
+              rows="4"
               no-resize
               color="secondary"
             />
@@ -120,6 +122,8 @@
             rows="5"
             clearable
             required
+            counter="500"
+            maxlength="500"
             :rules="[(v) => !!v || 'Descrição obrigatória']"
           />
         </template>
