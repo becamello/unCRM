@@ -53,7 +53,8 @@
 <script>
 import { icons } from "@/constants/icons";
 import utilStorage from "@/utils/storage";
-import { lightTheme, darkTheme, themeVars } from '@/constants/colors';
+import { lightTheme, darkTheme, themeVars } from "@/constants/colors";
+import Usuario from "@/models/Usuario";
 
 export default {
   name: "MenuLateral",
@@ -62,12 +63,8 @@ export default {
       icons,
       drawer: true,
       mini: true,
-      menuItems: [
-        { title: "Página inicial", icon: "paginaInicial", to: "/" },
-        { title: "Atendimentos", icon: "atendimento", to: "/crm-atendimentos" },
-        { title: "Cadastro de usuário", icon: "usuario", to: "/usuarios" },
-        { title: "Cadastro de pessoa", icon: "pessoa", to: "/pessoas" },
-      ],
+      user: null,
+      menuItems: [],
       footerItems: [
         { title: "Alternar tema", icon: "alternarTema", action: "toggleTheme" },
         { title: "Deslogar", icon: "logout", action: "logout" },
@@ -75,12 +72,44 @@ export default {
     };
   },
   created() {
+    const dadosUsuario = utilStorage.obterCargoNaStorage();
+    this.user = new Usuario(dadosUsuario);
+    this.setMenuItems();
     const darkMode = localStorage.getItem("darkMode");
     if (darkMode !== null) {
       this.$vuetify.theme.dark = darkMode === "true";
     }
   },
   methods: {
+    setMenuItems() {
+      const baseItems = [
+        { title: "Página inicial", icon: "paginaInicial", to: "/" },
+      ];
+
+      const atendimentos = {
+        title: "Atendimentos",
+        icon: "atendimento",
+        to: "/crm-atendimentos",
+      };
+      const usuarios = {
+        title: "Cadastro de usuário",
+        icon: "usuario",
+        to: "/usuarios",
+      };
+      const pessoas = {
+        title: "Cadastro de pessoa",
+        icon: "pessoa",
+        to: "/pessoas",
+      };
+
+      if (this.user?.isGerente) {
+        this.menuItems = [...baseItems, atendimentos, usuarios, pessoas];
+      } else if (this.user?.isSupervisor) {
+        this.menuItems = [...baseItems, atendimentos, usuarios];
+      } else if (this.user?.isAtendente) {
+        this.menuItems = [...baseItems, atendimentos];
+      }
+    },
     toggleMini() {
       this.mini = !this.mini;
     },
@@ -88,15 +117,15 @@ export default {
       this.mini = true;
     },
     toggleTheme() {
-    this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
-    localStorage.setItem("darkMode", this.$vuetify.theme.dark);
+      this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
+      localStorage.setItem("darkMode", this.$vuetify.theme.dark);
 
-    if (this.$vuetify.theme.dark) {
-      themeVars(darkTheme);
-    } else {
-      themeVars(lightTheme);
-    }
-  },
+      if (this.$vuetify.theme.dark) {
+        themeVars(darkTheme);
+      } else {
+        themeVars(lightTheme);
+      }
+    },
     logout() {
       utilStorage.removerStorage();
       utilStorage.removerTokenNaStorage();

@@ -25,6 +25,14 @@ export default class Usuario {
     return this.role === "Gerente";
   }
 
+  get isSupervisor() {
+    return this.role === "Supervisor";
+  }
+
+  get isAtendente() {
+    return this.role === "Atendente";
+  }
+
   get dataCadastroFormatada() {
     return this.dataCadastro
       ? new Date(this.dataCadastro).toLocaleDateString("pt-BR")

@@ -4,12 +4,10 @@ import HomeView from "@/views/HomeView.vue";
 import LoginPage from "@/views/Login.vue";
 import InicialPessoas from "@/views/Pessoas/InicialPessoas.vue";
 import InicialUsuarios from "@/views/Usuarios/InicialUsuarios.vue";
+import StatusCodePage403 from "@/views/StatusCode/StatusCodePage403.vue";
+import StatusCodePage404 from "@/views/StatusCode/StatusCodePage404.vue";
 
 const routes = [
-  {
-    path: "*",
-    redirect: "/login",
-  },
   {
     path: "/login",
     name: "Login",
@@ -26,6 +24,24 @@ const routes = [
     meta: {
       title: "Página Inicial",
       requiredAuth: true,
+    },
+  },
+    {
+    path: "/403",
+    name: "StatusCodePage403",
+    component: StatusCodePage403,
+    meta: {
+      title: "Acesso Negado",
+      requiredAuth: false,
+    },
+  },
+  {
+    path: "*",
+    name: "StatusCodePage404",
+    component: StatusCodePage404,
+    meta: {
+      title: "Página Não Encontrada",
+      requiredAuth: false,
     },
   },
   {
@@ -53,6 +69,7 @@ const routes = [
     meta: {
       title: "Usuários",
       requiredAuth: true,
+      rolesPermitidos: ["Gerente", "Supervisor"],
     },
   },
   {
@@ -62,6 +79,7 @@ const routes = [
     meta: {
       title: "Pessoas",
       requiredAuth: true,
+      rolesPermitidos: ["Gerente"],
     },
   },
 ];
