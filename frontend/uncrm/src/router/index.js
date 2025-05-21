@@ -28,22 +28,21 @@ router.beforeEach((to, from, next) => {
     const usuario = utilStorage.obterCargoNaStorage();
     const user = new Usuario(usuario);
 
-    const rota = to.path;
-
     const permissoes = {
-      Gerente: ["/", "/crm-atendimentos", "/usuarios", "/pessoas"],
-      Supervisor: ["/", "/crm-atendimentos", "/usuarios"],
-      Atendente: ["/", "/crm-atendimentos"],
+      Gerente: ["Inicial", "Atendimentos", "Usuários", "Pessoas", "HistoricoAtendimento"],
+      Supervisor: ["Inicial", "Atendimentos", "Usuários", "HistoricoAtendimento"],
+      Atendente: ["Inicial", "Atendimentos", "HistoricoAtendimento"],
     };
 
     const rotasPermitidas = permissoes[user.role] || [];
 
-    if (!rotasPermitidas.includes(rota)) {
+    if (!rotasPermitidas.includes(to.name)) {
       return next({ name: "StatusCodePage403" });
     }
   }
 
   next();
 });
+
 
 export default router;
