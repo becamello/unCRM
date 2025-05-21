@@ -40,6 +40,20 @@ function obterUsuarioIdDoToken() {
   }
 }
 
+function obterCargoNaStorage() {
+  let token = obterTokenNaStorage();
+  if (!token) return null;
+
+  try {
+    let payloadBase64 = token.split(".")[1];
+    let payload = JSON.parse(atob(payloadBase64));
+    return new Usuario(payload);
+  } catch (e) {
+    console.error("Erro ao decodificar token:", e);
+    return null;
+  }
+}
+
 export default {
   salvarStorage,
   obterStorage,
@@ -47,5 +61,6 @@ export default {
   salvarTokenNaStorage,
   obterTokenNaStorage,
   removerTokenNaStorage,
-  obterUsuarioIdDoToken
+  obterUsuarioIdDoToken,
+  obterCargoNaStorage
 };

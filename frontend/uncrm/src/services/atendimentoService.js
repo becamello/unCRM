@@ -20,16 +20,32 @@ function registrarParecer(atendimentoId, request) {
   });
 }
 
-function obterTodos() {
+function obterTodos(filtro) {
+  const filtroFormatado = formatarFiltro(filtro);
   return new Promise((resolve, reject) => {
     api
-      .get("/atendimento")
+      .get(`/atendimento?${filtroFormatado}`)
       .then((response) => {
         const lista = response.data.map((item) => new Atendimento(item));
         resolve(lista);
       })
       .catch((error) => reject(error));
   });
+}
+
+function formatarFiltro(params) {
+  const query = Object.entries(params)
+    .flatMap(([key, value]) => {
+      if (value == null) return [];
+      if (Array.isArray(value)) {
+        if (value.length === 0) return []; 
+        return value.map(v => `${encodeURIComponent(key)}=${encodeURIComponent(v)}`);
+      }
+      return [`${encodeURIComponent(key)}=${encodeURIComponent(value)}`];
+    })
+    .join("&");
+
+  return query ? `${query}` : "";
 }
 
 function obterPorId(id) {
@@ -117,5 +133,6 @@ export default {
   encerrar,
   registrarProximoContato,
   registrarParecerComProximoContato,
-  registrarParecerComEncerramento
+  registrarParecerComEncerramento,
+  formatarFiltro
 };

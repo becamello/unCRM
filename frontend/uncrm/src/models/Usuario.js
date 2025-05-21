@@ -8,6 +8,7 @@ export default class Usuario {
     this.dataCadastro = dados.dataCadastro;
     this.token = dados.token;
     this.cargo = dados.cargo;
+    this.role = dados.role;
   }
 
   static cargoMap = {
@@ -21,7 +22,7 @@ export default class Usuario {
   }
   
   get isGerente() {
-    return this.cargo === 0;
+    return this.role === "Gerente";
   }
 
   get dataCadastroFormatada() {
