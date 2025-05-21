@@ -149,6 +149,7 @@ namespace UnCRM.Api.Domain.Services.Classes
                     UsuarioCriadorId = p.UsuarioCriacaoId,
                     UsuarioCriadorLogin = usuarios.GetValueOrDefault(p.UsuarioCriacaoId),
                     StatusAtendimento = atendimento.Status,
+                    Data = p.Data
                 }).ToList()
             };
         }

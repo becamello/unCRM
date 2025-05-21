@@ -42,6 +42,7 @@ namespace UnCRM.Api.Contract.Atendimento
         public StatusAtendimentoEnum StatusAtendimento { get; set; }
         public List<Parecer> Pareceres { get; set; }
         public string Descricao { get; set; }
+        public DateTime Data { get; set; }
     }
 
     public class DadosProximoContatoResponse
