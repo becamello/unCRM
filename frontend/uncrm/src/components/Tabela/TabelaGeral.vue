@@ -95,7 +95,7 @@
       <template v-slot:[`item.acoes`]="slotProps">
         <div class="d-flex align-center">
           <slot name="botoesExtras" v-bind="slotProps" />
-          <v-menu offset-y>
+          <v-menu v-if="mostrarAcoes" offset-y>
             <template v-slot:activator="{ on, attrs }">
               <v-btn icon v-bind="attrs" v-on="on">
                 <v-icon small>{{ actionIcon }}</v-icon>
@@ -147,6 +147,7 @@ export default {
     items: { type: Array, required: true },
     actions: { type: Array, default: () => [] },
     actionIcon: { type: String, default: icons.subMenu },
+    mostrarAcoes: { type: Boolean, default: true }, 
   },
   data() {
     return {

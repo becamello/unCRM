@@ -45,7 +45,7 @@
             :headers="headers"
             :items="atendimentos"
             :actions="acoes"
-            action-icon="mdi-dots-vertical"
+            :action-icon="icons.subMenu"
             height="72vh"
           >
             <template v-slot:botoesExtras="{ item: atendimento }">

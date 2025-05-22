@@ -1,8 +1,12 @@
 import Usuario from "@/models/Usuario";
 
 function salvarStorage(usuario) {
-  let usuarioString = JSON.stringify(usuario);
-  localStorage.setItem("usuario", usuarioString);
+    if (typeof usuario === "string") {
+    localStorage.setItem("usuario", usuario);
+  } else {
+    let usuarioString = JSON.stringify(usuario);
+    localStorage.setItem("usuario", usuarioString);
+  }
 }
 
 function obterStorage() {

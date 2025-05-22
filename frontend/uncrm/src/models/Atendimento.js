@@ -32,6 +32,16 @@ export default class Atendimento {
       ? new Date(this.dataCadastro).toLocaleDateString("pt-BR")
       : "-";
   }
+  get dataInativacaoFormatada() {
+    return this.dataInativacao
+      ? new Date(this.dataInativacao).toLocaleDateString("pt-BR")
+      : "-";
+  }
+  get dataProximoContatoFormatada() {
+    return this.proximoContato.data
+      ? new Date(this.proximoContato.data).toLocaleDateString("pt-BR")
+      : "-";
+  }
 
   get dataUsuarioCadastro() {
     return `${this.dataCadastroFormatada} - ${this.usuarioCriadorLogin ?? "-"}`;
@@ -40,4 +50,16 @@ export default class Atendimento {
   get idFormatado() {
     return this.id.toString().padStart(6, '0') ?? " ";
   }
+
+  get dataCadastroIso() {
+  return this.dataCadastro
+    ? new Date(this.dataCadastro).toISOString().split("T")[0]
+    : null;
+}
+
+get dataInativacaoIso() {
+  return this.dataInativacao
+    ? new Date(this.dataInativacao).toISOString().split("T")[0]
+    : null;
+}
 }
