@@ -365,13 +365,6 @@ export default {
           },
         },
         {
-          label: "Alterar próximo contato",
-          icon: icons.alterarProximoContato,
-          //   handler: (item) => {
-          //     console.log("Excluir", item);
-          //   },
-        },
-        {
           label: "Reabrir atendimento",
           icon: icons.reabrir,
           disabled: (atendimento) => atendimento.status === 0,
