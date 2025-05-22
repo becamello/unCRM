@@ -102,7 +102,7 @@ export default {
 }
 
 .toast-subtitle {
-  color: var(--text-primary);
+  color: var(--secondary);
   font-size: 14px;
 }
 </style>

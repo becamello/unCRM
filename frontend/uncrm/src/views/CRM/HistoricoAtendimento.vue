@@ -14,7 +14,7 @@
             <v-col
               cols="12"
               md="7"
-              sm="12"
+              sm="6"
               class="d-flex align-center justify-start pb-1"
             >
               <breadcrumbs />
@@ -24,6 +24,7 @@
             <v-col
               cols="12"
               md="3"
+              sm="3"
               class="py-0"
               v-for="(info, index) in infosPrincipais()"
               :key="index"
@@ -104,7 +105,7 @@
         </v-row>
       </v-form>
       <ModalFormulario
-      v-if="modalVisivel"
+        v-if="modalVisivel"
         v-model="modalVisivel"
         @cancelar="cancelar"
         @salvar="aoSalvarParecer"

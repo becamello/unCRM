@@ -20,4 +20,10 @@ export default {
 .label-info {
   font-size: 14px;
 }
+
+@media (max-width: 600px) {
+  strong {
+    display: none;
+  }
+}
 </style>
