@@ -91,6 +91,7 @@ namespace UnCRM.Api.Domain.Services.Classes
 
                 StatusAtendimento = x.Status,
                 DataCadastro = x.DataCadastro,
+                DataInativacao = x.DataInativacao,
 
                 ProximoContato = x.ProximoContato is not null
                     ? new DadosProximoContatoResponse
@@ -137,6 +138,7 @@ namespace UnCRM.Api.Domain.Services.Classes
 
                 StatusAtendimento = atendimento.Status,
                 DataCadastro = atendimento.DataCadastro,
+                DataInativacao = atendimento.DataInativacao,
 
                 ProximoContato = atendimento.ProximoContato != null
                     ? new DadosProximoContatoResponse

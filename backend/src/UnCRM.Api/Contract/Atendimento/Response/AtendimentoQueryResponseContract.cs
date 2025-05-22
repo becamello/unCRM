@@ -15,6 +15,7 @@ namespace UnCRM.Api.Contract.Atendimento
         public StatusAtendimentoEnum StatusAtendimento { get; set; }
         public DadosProximoContatoResponse ProximoContato { get; set; }
         public DateTime DataCadastro { get; set; }
+        public DateTime? DataInativacao { get; set; }
     }
 
     public class AtendimentoResponseContract
@@ -30,6 +31,7 @@ namespace UnCRM.Api.Contract.Atendimento
         public List<AtendimentoParecerResponseContract> Pareceres { get; set; }
         public DadosProximoContatoResponse ProximoContato { get; set; }
         public DateTime DataCadastro { get; set; }
+        public DateTime? DataInativacao { get; set; }
     }
 
     public class AtendimentoParecerResponseContract
