@@ -1,3 +1,16 @@
+const chartColors = [
+  "#534194",
+  "#2ECC71", 
+  "#3498DB", 
+  "#F1C40F", 
+  "#E74C3C", 
+  "#1ABC9C", 
+  "#E67E22", 
+  "#9B59B6", 
+  "#34495E", 
+  "#F39C12"  
+];
+
 const lightTheme = {
   primary: "#534194",
   secondary: "#252525",
@@ -7,7 +20,8 @@ const lightTheme = {
   info: "#3498DB",
 
   "text-primary": "#534194",
-  "background-parecer": '#f0f0f0'
+  "background-parecer": "#f0f0f0",
+  "text-hover": "#505050"
 };
 
 const darkTheme = {
@@ -19,7 +33,8 @@ const darkTheme = {
   info: "#64B5F6",
 
   "text-primary": "#fff",
-  "background-parecer": '#1e1e1e'
+  "background-parecer": "#1e1e1e",
+  "text-hover": "#C9C9C9"
 };
 
 function themeVars(theme) {
@@ -29,4 +44,4 @@ function themeVars(theme) {
   });
 }
 
-export { lightTheme, darkTheme, themeVars };
+export { lightTheme, darkTheme, chartColors, themeVars };

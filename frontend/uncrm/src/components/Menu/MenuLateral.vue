@@ -84,6 +84,7 @@ export default {
     setMenuItems() {
       const baseItems = [
         { title: "Página inicial", icon: "paginaInicial", to: "/" },
+        { title: "Dashboard", icon: "dashboard", to: "/dashboard" },
       ];
 
       const atendimentos = {

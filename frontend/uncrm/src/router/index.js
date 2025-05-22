@@ -29,9 +29,9 @@ router.beforeEach((to, from, next) => {
     const user = new Usuario(usuario);
 
     const permissoes = {
-      Gerente: ["Inicial", "Atendimentos", "Usuários", "Pessoas", "HistoricoAtendimento"],
-      Supervisor: ["Inicial", "Atendimentos", "Usuários", "HistoricoAtendimento"],
-      Atendente: ["Inicial", "Atendimentos", "HistoricoAtendimento"],
+      Gerente: ["Inicial", "Atendimentos", "Usuários", "Pessoas", "HistoricoAtendimento", "Dashboard"],
+      Supervisor: ["Inicial", "Atendimentos", "Usuários", "HistoricoAtendimento", "Dashboard"],
+      Atendente: ["Inicial", "Atendimentos", "HistoricoAtendimento", "Dashboard"],
     };
 
     const rotasPermitidas = permissoes[user.role] || [];

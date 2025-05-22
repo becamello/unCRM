@@ -4,6 +4,7 @@ export const icons = {
     atendimento: 'mdi-newspaper-variant-outline', 
     usuario: 'mdi-account-group-outline',
     pessoa: 'mdi-card-account-details-outline',
+    dashboard: 'mdi-view-dashboard-outline',
     alternarTema: 'mdi-theme-light-dark',
     logout: 'mdi-logout',
     adicionar: 'mdi-plus',

@@ -1,11 +1,12 @@
 import CRMAtendimentos from "@/views/CRM/Atendimentos.vue";
 import HistoricoAtendimento from "@/views/CRM/HistoricoAtendimento.vue";
-import HomeView from "@/views/HomeView.vue";
 import LoginPage from "@/views/Login.vue";
 import InicialPessoas from "@/views/Pessoas/InicialPessoas.vue";
 import InicialUsuarios from "@/views/Usuarios/InicialUsuarios.vue";
 import StatusCodePage403 from "@/views/StatusCode/StatusCodePage403.vue";
 import StatusCodePage404 from "@/views/StatusCode/StatusCodePage404.vue";
+import DashboardPage from "@/views/DashboardPage.vue";
+import TelaInicial from "@/views/TelaInicial.vue";
 
 const routes = [
   {
@@ -20,7 +21,7 @@ const routes = [
   {
     path: "/",
     name: "Inicial",
-    component: HomeView,
+    component: TelaInicial,
     meta: {
       title: "Página Inicial",
       requiredAuth: true,
@@ -80,6 +81,15 @@ const routes = [
       title: "Pessoas",
       requiredAuth: true,
       rolesPermitidos: ["Gerente"],
+    },
+  },
+  {
+    path: "/dashboard",
+    name: "Dashboard",
+    component: DashboardPage,
+    meta: {
+      title: "Dashboard",
+      requiredAuth: true,
     },
   },
 ];
