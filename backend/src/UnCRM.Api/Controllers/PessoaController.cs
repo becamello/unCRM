@@ -17,8 +17,13 @@ namespace UnCRM.Api.Controllers
             _pessoaService = pessoaService;
         }
 
+        // <summary> Adiciona uma nova pessoa </summary>
         [HttpPost]
         [Authorize]
+        [ProducesResponseType(typeof(PessoaResponseContract), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Adicionar(PessoaRequestContract contrato)
         {
             try
@@ -40,8 +45,11 @@ namespace UnCRM.Api.Controllers
             }
         }
 
+        // <summary> Obtém todas as pessoas. </summary>
         [HttpGet]
         [Authorize]
+        [ProducesResponseType(typeof(IEnumerable<PessoaResponseContract>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Obter()
         {
             try
@@ -54,8 +62,12 @@ namespace UnCRM.Api.Controllers
             }
         }
 
+        // <summary> Obtém uma pessoa pelo ID. </summary>
         [HttpGet("{id}")]
         [Authorize]
+        [ProducesResponseType(typeof(PessoaResponseContract), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Obter(long id)
         {
             try
@@ -73,8 +85,13 @@ namespace UnCRM.Api.Controllers
             }
         }
 
+        // <summary> Atualiza os dados de uma pessoa. </summary>
         [HttpPut("{id}")]
         [Authorize]
+        [ProducesResponseType(typeof(PessoaResponseContract), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Atualizar(long id, PessoaRequestContract contrato)
         {
             try
@@ -96,8 +113,12 @@ namespace UnCRM.Api.Controllers
             }
         }
 
+        // <summary> Inativa uma pessoa. </summary>
         [HttpDelete("{id}")]
         [Authorize]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Deletar(long id)
         {
             try

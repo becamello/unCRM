@@ -18,10 +18,13 @@ namespace UnCRM.Api.Controllers
             _usuarioService = usuarioService;
         }
 
-
+        // <summary> Realiza login do usuário. </summary>
         [HttpPost]
         [Route("login")]
         [AllowAnonymous]
+        [ProducesResponseType(typeof(UsuarioResponseContract), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Autenticar(UsuarioLoginRequestContract contrato)
         {
             try
@@ -38,8 +41,13 @@ namespace UnCRM.Api.Controllers
             }
         }
 
+        // <summary> Adiciona um novo usuário. </summary>
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize]
+        [ProducesResponseType(typeof(UsuarioResponseContract), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Adicionar(UsuarioRequestContract contrato)
         {
             try
@@ -61,8 +69,12 @@ namespace UnCRM.Api.Controllers
             }
         }
 
+        // <summary> Obtém todos os usuários. </summary>
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize]
+        [ProducesResponseType(typeof(UsuarioResponseContract), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Obter()
         {
             try
@@ -75,8 +87,12 @@ namespace UnCRM.Api.Controllers
             }
         }
 
+        // <summary> Obtém um usuário pelo ID. </summary>
         [HttpGet("{id}")]
         [Authorize]
+        [ProducesResponseType(typeof(UsuarioResponseContract), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Obter(long id)
         {
             try
@@ -94,8 +110,13 @@ namespace UnCRM.Api.Controllers
             }
         }
 
+        // <summary> Atualiza os dados de um usuário. </summary>
         [HttpPut("{id}")]
         [Authorize]
+        [ProducesResponseType(typeof(UsuarioResponseContract), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Atualizar(long id, UsuarioRequestContract contrato)
         {
             try
@@ -117,8 +138,12 @@ namespace UnCRM.Api.Controllers
             }
         }
 
+        // <summary> Inativa um usuário. </summary>
         [HttpDelete("{id}")]
         [Authorize]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)] 
         public async Task<IActionResult> Deletar(long id)
         {
             try
