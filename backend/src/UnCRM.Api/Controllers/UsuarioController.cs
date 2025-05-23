@@ -43,7 +43,7 @@ namespace UnCRM.Api.Controllers
 
         // <summary> Adiciona um novo usuário. </summary>
         [HttpPost]
-        [Authorize]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(UsuarioResponseContract), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

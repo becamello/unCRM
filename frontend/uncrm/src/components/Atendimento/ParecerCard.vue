@@ -21,7 +21,7 @@
             </span>
           </template>
           <span v-if="atendimentoEncerrado">
-            Atendimentos encerrados não podem ser editados
+            Atendimentos encerrados não podem editar pareceres
           </span>
           <span v-else> Editar parecer </span>
         </v-tooltip>

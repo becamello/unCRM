@@ -164,7 +164,7 @@ export default {
         { text: "Nome", value: "nome", width: "28vw" },
         { text: "Cargo", value: "cargoDescricao", width: "13vw" },
         { text: "Data cadastro", value: "dataCadastroFormatada", width: "13vw" },
-        { text: "Status", value: "statusItem", align: "center", width: "10vw" },
+        { text: "Status", value: "statusItem", align: "center", width: "9vw" },
         { text: "Ações", value: "acoes", sortable: false },
       ],
       usuarios: [],

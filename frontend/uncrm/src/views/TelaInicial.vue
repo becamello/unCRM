@@ -28,7 +28,7 @@
               <TabelaGeral
                 :headers="headers"
                 :items="atendimentos"
-                height="auto"
+                height="60vh"
                 :mostrarAcoes="false"
               >
                 <template #botoesExtras="{ item: atendimento }">
@@ -115,14 +115,14 @@ export default {
         {
           text: "Tipo de atendimento",
           value: "tipoAtendimentoDescricao",
-          width: "12vw",
+          width: "14vw",
         },
-        { text: "Pessoa", value: "pessoaNome", width: "20vw" },
+        { text: "Pessoa", value: "pessoaNome", width: "18vw" },
         {
           text: "Data próximo contato",
           value: "dataProximoContatoFormatada",
           align: "center",
-          width: "14vw",
+          width: "15vw",
         },
         { text: "Ações", value: "acoes", sortable: false },
       ],

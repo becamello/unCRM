@@ -51,7 +51,7 @@
       </v-row>
       <v-row>
         <v-col cols="12" md="12">
-          <div style="max-height: 50vh; overflow-y: auto">
+          <div style="height: 50vh; overflow-y: auto">
             <ParecerCard
               v-for="parecer in atendimento.pareceres"
               :key="parecer.id"
@@ -191,7 +191,7 @@ export default {
       usuarioLogadoId: storage.obterUsuarioIdDoToken(),
       atendimento: null,
       isLoading: true,
-      tituloModal: "Próximo passo:",
+      
       parecerAcao: null,
       proximoContatoData: "",
       proximoContatoUsuario: "",
@@ -296,6 +296,7 @@ export default {
         this.tempProximoContatoData = null;
         this.tempProximoContatoUsuario = null;
         this.modalVisivel = true;
+        this.tituloModal = "Próximo passo:";
       }
     },
     async confirmarAcaoParecer() {

@@ -157,8 +157,8 @@ export default {
       ],
       headers: [
         { text: "Código", value: "idFormatado", width: "8vw" },
-        { text: "Nome", value: "nome", width: "20vw" },
-        { text: "Nome curto", value: "nomeCurto", width: "12vw" },
+        { text: "Nome", value: "nome", width: "26vw" },
+        { text: "Nome curto", value: "nomeCurto", width: "14vw" },
         { text: "CPF/CNPJ", value: "cpfCnpjFormatado", width: "12vw" },
         { text: "Tipo de pessoa", value: "tipoPessoaDescricao", width: "10vw" },
         { text: "Data cadastro", value: "dataCadastroFormatada", width: "10vw" },
